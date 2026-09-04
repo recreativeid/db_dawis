@@ -127,6 +127,13 @@ class AppProvider with ChangeNotifier {
           jenisKelamin: 'Perempuan',
           usia: 40,
         ),
+        AnggotaKeluargaModel(
+          nik: '3319016003210001',
+          nama: 'Rina Santoso',
+          hubungan: 'Anak',
+          jenisKelamin: 'Perempuan',
+          usia: 3,
+        ),
       ],
     ),
     KeluargaModel(
@@ -140,8 +147,8 @@ class AppProvider with ChangeNotifier {
       rw: '4',
       dawis: 'Dahlia 2',
       totalAnggota: 4,
-      jumlahLakiLaki: 2,
-      jumlahPerempuan: 2,
+      jumlahLakiLaki: 3,
+      jumlahPerempuan: 1,
       balitaLaki: 1,
       balitaPerempuan: 0,
       jumlahLansia: 1,
@@ -175,6 +182,27 @@ class AppProvider with ChangeNotifier {
           hubungan: 'Kepala Keluarga',
           jenisKelamin: 'Laki-laki',
           usia: 50,
+        ),
+        AnggotaKeluargaModel(
+          nik: '3319015809860002',
+          nama: 'Sri Wahyuni',
+          hubungan: 'Istri',
+          jenisKelamin: 'Perempuan',
+          usia: 42,
+        ),
+        AnggotaKeluargaModel(
+          nik: '3319010107540001',
+          nama: 'Mbah Joyo',
+          hubungan: 'Orang Tua',
+          jenisKelamin: 'Laki-laki',
+          usia: 70,
+        ),
+        AnggotaKeluargaModel(
+          nik: '3319011204220003',
+          nama: 'Doni Riyadi',
+          hubungan: 'Anak',
+          jenisKelamin: 'Laki-laki',
+          usia: 4,
         ),
       ],
     ),
@@ -510,30 +538,16 @@ class AppProvider with ChangeNotifier {
 
   int get totalKK => filteredKeluargaList.length;
   int get totalWarga => filteredKeluargaList.fold(0, (sum, k) {
-    if (k.anggotaList.isNotEmpty) {
-      return sum + k.anggotaList.length;
-    }
-    return sum + (k.totalAnggota > 0 ? k.totalAnggota : (k.jumlahLakiLaki + k.jumlahPerempuan));
+    int val = k.totalAnggota > 0 ? k.totalAnggota : (k.jumlahLakiLaki + k.jumlahPerempuan);
+    return sum + (val > 0 ? val : k.anggotaList.length);
   });
   int get totalBalita => filteredKeluargaList.fold(0, (sum, k) => sum + k.totalBalita);
   int get totalLansia => filteredKeluargaList.fold(0, (sum, k) => sum + k.jumlahLansia);
   int get totalLaki => filteredKeluargaList.fold(0, (sum, k) {
-    if (k.anggotaList.isNotEmpty) {
-      return sum + k.anggotaList.where((a) {
-        final jk = a.jenisKelamin.toLowerCase();
-        return jk.contains('laki') || jk.contains('pria') || jk == 'l';
-      }).length;
-    }
     int demografiL = k.balitaLaki + k.jumlahLansia + k.jumlahPus;
     return sum + (k.jumlahLakiLaki > 0 ? k.jumlahLakiLaki : demografiL);
   });
   int get totalPerempuan => filteredKeluargaList.fold(0, (sum, k) {
-    if (k.anggotaList.isNotEmpty) {
-      return sum + k.anggotaList.where((a) {
-        final jk = a.jenisKelamin.toLowerCase();
-        return jk.contains('perempuan') || jk.contains('wanita') || jk == 'p';
-      }).length;
-    }
     int demografiP = k.balitaPerempuan + k.jumlahWus;
     return sum + (k.jumlahPerempuan > 0 ? k.jumlahPerempuan : demografiP);
   });

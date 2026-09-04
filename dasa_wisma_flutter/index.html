@@ -1695,8 +1695,9 @@
         isPenerimaBantuan: true,
         namaBantuan: 'PJK',
         anggotaList: [
-          { nik: '3319011205800002', nama: 'Budi Santoso', hubungan: 'Kepala Keluarga', jenisKelamin: 'Laki-laki', usia: 45 },
-          { nik: '3319015506820003', nama: 'Siti Aminah', hubungan: 'Istri', jenisKelamin: 'Perempuan', usia: 40 }
+          { nik: '3319011205800002', nama: 'Budi Santoso', hubungan: 'Kepala Keluarga', jenisKelamin: 'Laki-laki', usia: 45, isHead: true },
+          { nik: '3319015506820003', nama: 'Siti Aminah', hubungan: 'Istri', jenisKelamin: 'Perempuan', usia: 40, isHead: false },
+          { nik: '3319016003210001', nama: 'Rina Santoso', hubungan: 'Anak', jenisKelamin: 'Perempuan', usia: 3, isHead: false }
         ]
       },
       {
@@ -1734,7 +1735,10 @@
         isPenerimaBantuan: true,
         namaBantuan: 'PJK',
         anggotaList: [
-          { nik: '3319011508850005', nama: 'Slamet Riyadi', hubungan: 'Kepala Keluarga', jenisKelamin: 'Laki-laki', usia: 50 }
+          { nik: '3319011508850005', nama: 'Slamet Riyadi', hubungan: 'Kepala Keluarga', jenisKelamin: 'Laki-laki', usia: 50, isHead: true },
+          { nik: '3319015809860002', nama: 'Sri Wahyuni', hubungan: 'Istri', jenisKelamin: 'Perempuan', usia: 42, isHead: false },
+          { nik: '3319010107540001', nama: 'Mbah Joyo', hubungan: 'Orang Tua', jenisKelamin: 'Laki-laki', usia: 70, isHead: false },
+          { nik: '3319011204220003', nama: 'Doni Riyadi', hubungan: 'Anak', jenisKelamin: 'Laki-laki', usia: 4, isHead: false }
         ]
       }
     ];
@@ -2589,77 +2593,41 @@
 
       // 2. Total Warga = Berisi seluruh data anggota yang ada di menu manajemen kk
       const totalWarga = filtered.reduce((acc, k) => {
-        const jmlAnggota = (k.anggotaList && k.anggotaList.length > 0)
-          ? k.anggotaList.length
-          : (Number(k.totalAnggota) || (Number(k.laki || 0) + Number(k.perempuan || 0)));
-        return acc + jmlAnggota;
+        const val = Number(k.totalAnggota) || (Number(k.laki || 0) + Number(k.perempuan || 0));
+        return acc + (val > 0 ? val : (k.anggotaList ? k.anggotaList.length : 0));
       }, 0);
 
       // 3. Laki-laki = Meliputi balita laki2, lansia laki-laki, pus (pria usia subur)
       const totalLaki = filtered.reduce((acc, k) => {
-        if (k.anggotaList && k.anggotaList.length > 0) {
-          return acc + k.anggotaList.filter(a => {
-            const jk = (a.jenisKelamin || a.jk || '').toLowerCase();
-            return jk.includes('laki') || jk.includes('pria') || jk === 'l';
-          }).length;
-        }
         const bL = Number(k.balitaL || 0);
         const lnsL = Number(k.lansiaL !== undefined ? k.lansiaL : (k.lansia || 0));
         const pus = Number(k.pus || 0);
         const demografiL = bL + lnsL + pus;
-        return acc + (Number(k.laki || 0) > 0 ? Math.max(Number(k.laki), demografiL) : demografiL);
+        const valLaki = Number(k.laki || 0) > 0 ? Number(k.laki) : demografiL;
+        return acc + valLaki;
       }, 0);
 
       // 4. Perempuan = Meliputi balita perempuan, lansia perempuan dan wus (wanita usia subur)
       const totalPerempuan = filtered.reduce((acc, k) => {
-        if (k.anggotaList && k.anggotaList.length > 0) {
-          return acc + k.anggotaList.filter(a => {
-            const jk = (a.jenisKelamin || a.jk || '').toLowerCase();
-            return jk.includes('perempuan') || jk.includes('wanita') || jk === 'p';
-          }).length;
-        }
         const bP = Number(k.balitaP || 0);
         const lnsP = Number(k.lansiaP !== undefined ? k.lansiaP : 0);
         const wus = Number(k.wus || 0);
         const demografiP = bP + lnsP + wus;
-        return acc + (Number(k.perempuan || 0) > 0 ? Math.max(Number(k.perempuan), demografiP) : demografiP);
+        const valPerempuan = Number(k.perempuan || 0) > 0 ? Number(k.perempuan) : demografiP;
+        return acc + valPerempuan;
       }, 0);
 
       // 5. Balita, Lansia, PUS, WUS, Ibu Hamil, Ibu Menyusui sesuai data yg ada dan terisi di manajemen kk
-      const totalBalita = filtered.reduce((acc, k) => {
-        if (k.anggotaList && k.anggotaList.length > 0) {
-          return acc + k.anggotaList.filter(a => kalkulasiKategoriAnggota(a).isBalita).length;
-        }
-        return acc + (Number(k.balitaL || 0) + Number(k.balitaP || 0));
-      }, 0);
-
-      const totalLansia = filtered.reduce((acc, k) => {
-        if (k.anggotaList && k.anggotaList.length > 0) {
-          return acc + k.anggotaList.filter(a => kalkulasiKategoriAnggota(a).isLansia).length;
-        }
-        return acc + (Number(k.lansiaL || 0) + Number(k.lansiaP || 0) || Number(k.lansia || 0));
-      }, 0);
-
-      const totalPus = filtered.reduce((acc, k) => {
-        if (k.anggotaList && k.anggotaList.length > 0) {
-          return acc + k.anggotaList.filter(a => kalkulasiKategoriAnggota(a).isPus).length;
-        }
-        return acc + Number(k.pus || 0);
-      }, 0);
-
-      const totalWus = filtered.reduce((acc, k) => {
-        if (k.anggotaList && k.anggotaList.length > 0) {
-          return acc + k.anggotaList.filter(a => kalkulasiKategoriAnggota(a).isWus).length;
-        }
-        return acc + Number(k.wus || 0);
-      }, 0);
-
-      const totalHamil = filtered.reduce((acc, k) => acc + Number(k.hamil || 0), 0);
+      const totalBalita = filtered.reduce((acc, k) => acc + (Number(k.balitaL || 0) + Number(k.balitaP || 0)), 0);
+      const totalLansia = filtered.reduce((acc, k) => acc + (Number(k.lansiaL || 0) + Number(k.lansiaP || 0) || Number(k.lansia || 0)), 0);
+      const totalPus    = filtered.reduce((acc, k) => acc + Number(k.pus || 0), 0);
+      const totalWus    = filtered.reduce((acc, k) => acc + Number(k.wus || 0), 0);
+      const totalHamil  = filtered.reduce((acc, k) => acc + Number(k.hamil || 0), 0);
       const totalMenyusui = filtered.reduce((acc, k) => acc + Number(k.menyusui || 0), 0);
       const totalTunaHuruf = filtered.reduce((acc, k) => acc + Number(k.tunaHuruf || 0), 0);
       const totalTunaNetra = filtered.reduce((acc, k) => acc + Number(k.tunaNetra || 0), 0);
       const totalTunaRungu = filtered.reduce((acc, k) => acc + Number(k.tunaRungu || 0), 0);
-      const totalKhusus = filtered.reduce((acc, k) => acc + Number(k.khusus || 0), 0);
+      const totalKhusus    = filtered.reduce((acc, k) => acc + Number(k.khusus || 0), 0);
 
       // Fasilitas sanitasi
       const totalSampah = filtered.filter(k => k.tempatSampah).length;
@@ -2711,17 +2679,9 @@
           const pusVal = Number(k.pus || 0);
           const wusVal = Number(k.wus || 0);
 
-          const kLaki = (k.anggotaList && k.anggotaList.length > 0)
-            ? k.anggotaList.filter(a => (a.jenisKelamin || '').toLowerCase().includes('laki')).length
-            : (Number(k.laki || 0) > 0 ? Math.max(Number(k.laki), bL + lnsL + pusVal) : (bL + lnsL + pusVal));
-
-          const kPerempuan = (k.anggotaList && k.anggotaList.length > 0)
-            ? k.anggotaList.filter(a => (a.jenisKelamin || '').toLowerCase().includes('perempuan')).length
-            : (Number(k.perempuan || 0) > 0 ? Math.max(Number(k.perempuan), bP + lnsP + wusVal) : (bP + lnsP + wusVal));
-
-          const kAnggota = (k.anggotaList && k.anggotaList.length > 0)
-            ? k.anggotaList.length
-            : (Number(k.totalAnggota) || (kLaki + kPerempuan));
+          const kLaki = Number(k.laki || 0) > 0 ? Number(k.laki) : (bL + lnsL + pusVal);
+          const kPerempuan = Number(k.perempuan || 0) > 0 ? Number(k.perempuan) : (bP + lnsP + wusVal);
+          const kAnggota = Number(k.totalAnggota) || (kLaki + kPerempuan) || (k.anggotaList ? k.anggotaList.length : 0);
 
           return `
           <tr>
@@ -2890,12 +2850,12 @@
       const usia = Number(document.getElementById('fa-usia').value) || 0;
 
       item.anggotaList.push({ nik, nama, hubungan, jenisKelamin: jk, usia });
-      item.totalAnggota = item.anggotaList.length;
-      item.laki = item.anggotaList.filter(a => a.jenisKelamin.includes('Laki')).length;
-      item.perempuan = item.anggotaList.filter(a => a.jenisKelamin.includes('Perempuan')).length;
+      syncAgregatKk(item);
 
       closeAnggotaModal();
       renderKaderTable();
+      renderRekapData();
+      renderDashboardStats();
     }
 
     function openAddModal() {
