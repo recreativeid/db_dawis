@@ -1,0 +1,10 @@
+name: backend_skripsi
+description: API Pendataan Warga
+version: 1.0.0
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  shelf: ^1.4.1
+  shelf_router: ^1.1.4
+  mysql1: ^0.20.0

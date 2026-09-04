@@ -1,0 +1,43 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+hs_err_*.log
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Dart / Flutter related
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.pub-cache/
+**/.pub/
+**/build/
+**/doc/api/
+
+# Symbolication / Obfuscation
+app.*.symbols
+app.*.map.json
+
+# Android Studio / Xcode build artifacts
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
