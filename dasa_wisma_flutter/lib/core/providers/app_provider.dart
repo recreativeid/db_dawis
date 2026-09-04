@@ -508,12 +508,35 @@ class AppProvider with ChangeNotifier {
     return _keluargaList.where((k) => k.dawis.trim().toLowerCase() == _selectedDawis.trim().toLowerCase()).toList();
   }
 
-  int get totalWarga => filteredKeluargaList.fold(0, (sum, k) => sum + k.totalAnggota);
   int get totalKK => filteredKeluargaList.length;
+  int get totalWarga => filteredKeluargaList.fold(0, (sum, k) {
+    if (k.anggotaList.isNotEmpty) {
+      return sum + k.anggotaList.length;
+    }
+    return sum + (k.totalAnggota > 0 ? k.totalAnggota : (k.jumlahLakiLaki + k.jumlahPerempuan));
+  });
   int get totalBalita => filteredKeluargaList.fold(0, (sum, k) => sum + k.totalBalita);
   int get totalLansia => filteredKeluargaList.fold(0, (sum, k) => sum + k.jumlahLansia);
-  int get totalLaki => filteredKeluargaList.fold(0, (sum, k) => sum + k.jumlahLakiLaki);
-  int get totalPerempuan => filteredKeluargaList.fold(0, (sum, k) => sum + k.jumlahPerempuan);
+  int get totalLaki => filteredKeluargaList.fold(0, (sum, k) {
+    if (k.anggotaList.isNotEmpty) {
+      return sum + k.anggotaList.where((a) {
+        final jk = a.jenisKelamin.toLowerCase();
+        return jk.contains('laki') || jk.contains('pria') || jk == 'l';
+      }).length;
+    }
+    int demografiL = k.balitaLaki + k.jumlahLansia + k.jumlahPus;
+    return sum + (k.jumlahLakiLaki > 0 ? k.jumlahLakiLaki : demografiL);
+  });
+  int get totalPerempuan => filteredKeluargaList.fold(0, (sum, k) {
+    if (k.anggotaList.isNotEmpty) {
+      return sum + k.anggotaList.where((a) {
+        final jk = a.jenisKelamin.toLowerCase();
+        return jk.contains('perempuan') || jk.contains('wanita') || jk == 'p';
+      }).length;
+    }
+    int demografiP = k.balitaPerempuan + k.jumlahWus;
+    return sum + (k.jumlahPerempuan > 0 ? k.jumlahPerempuan : demografiP);
+  });
   int get totalPus => filteredKeluargaList.fold(0, (sum, k) => sum + k.jumlahPus);
   int get totalWus => filteredKeluargaList.fold(0, (sum, k) => sum + k.jumlahWus);
   int get totalIbuHamil => filteredKeluargaList.fold(0, (sum, k) => sum + k.jumlahIbuHamil);

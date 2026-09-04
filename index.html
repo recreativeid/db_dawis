@@ -1525,19 +1525,21 @@
       <!-- SECTION: Jumlah Anggota -->
       <div style="background:#f8fafc; border-radius:8px; padding:14px; margin-bottom:14px;">
         <p style="font-size:11px; font-weight:800; color:var(--primary-blue); text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px;">👨‍👩‍👧 Jumlah Anggota Keluarga</p>
-        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px;">
-          <div class="form-group"><label>Laki-laki (L)</label><input type="number" id="f-laki" value="1" min="0"></div>
-          <div class="form-group"><label>Perempuan (P)</label><input type="number" id="f-perempuan" value="0" min="0"></div>
-          <div class="form-group"><label>Balita L</label><input type="number" id="f-balita-l" value="0" min="0"></div>
-          <div class="form-group"><label>Balita P</label><input type="number" id="f-balita-p" value="0" min="0"></div>
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin-bottom:10px;">
+          <div class="form-group"><label>Laki-laki (L)</label><input type="number" id="f-laki" value="1" min="0" title="Meliputi Balita L + Lansia L + PUS"></div>
+          <div class="form-group"><label>Perempuan (P)</label><input type="number" id="f-perempuan" value="0" min="0" title="Meliputi Balita P + Lansia P + WUS"></div>
+          <div class="form-group"><label>Balita L</label><input type="number" id="f-balita-l" value="0" min="0" oninput="autoSyncDemografiForm()"></div>
+          <div class="form-group"><label>Balita P</label><input type="number" id="f-balita-p" value="0" min="0" oninput="autoSyncDemografiForm()"></div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin-bottom:10px;">
+          <div class="form-group"><label>Lansia L</label><input type="number" id="f-lansia-l" value="0" min="0" oninput="autoSyncDemografiForm()"></div>
+          <div class="form-group"><label>Lansia P</label><input type="number" id="f-lansia-p" value="0" min="0" oninput="autoSyncDemografiForm()"></div>
+          <div class="form-group"><label>Total Lansia</label><input type="number" id="f-lansia" value="0" min="0" readonly style="background:#e2e8f0; font-weight:700;"></div>
+          <div class="form-group"><label>PUS (Pria Usia Subur)</label><input type="number" id="f-pus" value="0" min="0" oninput="autoSyncDemografiForm()"></div>
         </div>
         <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px;">
-          <div class="form-group"><label>Lansia</label><input type="number" id="f-lansia" value="0" min="0"></div>
-          <div class="form-group"><label>PUS</label><input type="number" id="f-pus" value="0" min="0"></div>
-          <div class="form-group"><label>WUS</label><input type="number" id="f-wus" value="0" min="0"></div>
+          <div class="form-group"><label>WUS (Wanita Usia Subur)</label><input type="number" id="f-wus" value="0" min="0" oninput="autoSyncDemografiForm()"></div>
           <div class="form-group"><label>Ibu Hamil</label><input type="number" id="f-hamil" value="0" min="0"></div>
-        </div>
-        <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px;">
           <div class="form-group"><label>Ibu Menyusui</label><input type="number" id="f-menyusui" value="0" min="0"></div>
           <div class="form-group"><label>Berkebutuhan Khusus</label><input type="number" id="f-khusus" value="0" min="0"></div>
         </div>
@@ -1671,6 +1673,8 @@
         perempuan: 2,
         balitaL: 0,
         balitaP: 1,
+        lansiaL: 0,
+        lansiaP: 0,
         lansia: 0,
         pus: 1,
         wus: 1,
@@ -1704,10 +1708,12 @@
         rw: '4',
         dawis: 'Dahlia 2',
         totalAnggota: 4,
-        laki: 2,
-        perempuan: 2,
+        laki: 3,
+        perempuan: 1,
         balitaL: 1,
         balitaP: 0,
+        lansiaL: 1,
+        lansiaP: 0,
         lansia: 1,
         pus: 1,
         wus: 1,
@@ -2043,29 +2049,40 @@
       const statusNikah= (anggota.statusNikah || '').toLowerCase();
       const hubungan   = (anggota.hubungan || '').toLowerCase();
 
-      const isPerempuan = jk.includes('perempuan');
+      const isPerempuan = jk.includes('perempuan') || jk.includes('wanita') || jk === 'p';
+      const isLaki      = !isPerempuan && (jk.includes('laki') || jk.includes('pria') || jk === 'l');
       const isMenikah   = statusNikah === 'menikah';
 
-      const isBalita = usia < 5;
-      const isLansia = usia >= 60;
-      const isWus    = isPerempuan && usia >= 15 && usia <= 49;
-      // PUS: Istri yang menikah, usia 15-49
-      const isPus    = isPerempuan && isMenikah && hubungan === 'istri' && usia >= 15 && usia <= 49;
+      const isBalita  = usia < 5;
+      const isBalitaL = isBalita && isLaki;
+      const isBalitaP = isBalita && isPerempuan;
 
-      return { isBalita, isLansia, isWus, isPus };
+      const isLansia  = usia >= 60;
+      const isLansiaL = isLansia && isLaki;
+      const isLansiaP = isLansia && isPerempuan;
+
+      // PUS: Pria Usia Subur (laki-laki usia subur 15-69 tahun)
+      const isPus     = isLaki && (usia >= 15 && usia <= 69);
+
+      // WUS: Wanita Usia Subur (wanita usia subur 15-49 tahun)
+      const isWus     = isPerempuan && (usia >= 15 && usia <= 49);
+
+      return { isBalita, isBalitaL, isBalitaP, isLansia, isLansiaL, isLansiaP, isWus, isPus };
     }
 
     /**
      * Render badge HTML untuk satu anggota.
      */
     function renderKategoriBadgeHtml(anggota) {
-      const { isBalita, isLansia, isWus, isPus } = kalkulasiKategoriAnggota(anggota);
+      const { isBalitaL, isBalitaP, isLansiaL, isLansiaP, isWus, isPus } = kalkulasiKategoriAnggota(anggota);
       const badges = [];
-      if (isBalita) badges.push(`<span style="background:#fef3c7; color:#92400e; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px; white-space:nowrap;">🍼 Balita</span>`);
-      if (isLansia) badges.push(`<span style="background:#e0e7ff; color:#3730a3; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px; white-space:nowrap;">👴 Lansia</span>`);
-      if (isWus)    badges.push(`<span style="background:#fce7f3; color:#9d174d; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px; white-space:nowrap;">♀ WUS</span>`);
-      if (isPus)    badges.push(`<span style="background:#d1fae5; color:#065f46; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px; white-space:nowrap;">💑 PUS</span>`);
-      return badges.length ? badges.join('') : `<span style="color:var(--text-medium); font-size:10px;">—</span>`;
+      if (isBalitaL) badges.push(`<span style="background:#fef3c7; color:#92400e; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px; white-space:nowrap;">🍼 Balita (L)</span>`);
+      if (isBalitaP) badges.push(`<span style="background:#fce7f3; color:#9d174d; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px; white-space:nowrap;">🍼 Balita (P)</span>`);
+      if (isLansiaL) badges.push(`<span style="background:#e0e7ff; color:#3730a3; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px; white-space:nowrap;">👴 Lansia (L)</span>`);
+      if (isLansiaP) badges.push(`<span style="background:#f3e8ff; color:#6b21a8; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px; white-space:nowrap;">👵 Lansia (P)</span>`);
+      if (isPus)     badges.push(`<span style="background:#d1fae5; color:#065f46; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px; white-space:nowrap;">♂ PUS</span>`);
+      if (isWus)     badges.push(`<span style="background:#fce7f3; color:#be185d; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px; white-space:nowrap;">♀ WUS</span>`);
+      return badges.length ? badges.join(' ') : `<span style="color:var(--text-medium); font-size:10px;">—</span>`;
     }
 
     /**
@@ -2075,20 +2092,30 @@
     function syncAgregatKk(kkObj) {
       const list = kkObj.anggotaList || [];
       kkObj.totalAnggota = list.length;
-      kkObj.laki         = list.filter(a => (a.jenisKelamin || '').includes('Laki')).length;
-      kkObj.perempuan    = list.filter(a => (a.jenisKelamin || '').includes('Perempuan')).length;
+      kkObj.laki         = list.filter(a => {
+        const jk = (a.jenisKelamin || a.jk || '').toLowerCase();
+        return jk.includes('laki') || jk.includes('pria') || jk === 'l';
+      }).length;
+      kkObj.perempuan    = list.filter(a => {
+        const jk = (a.jenisKelamin || a.jk || '').toLowerCase();
+        return jk.includes('perempuan') || jk.includes('wanita') || jk === 'p';
+      }).length;
 
-      let balita = 0, lansia = 0, wus = 0, pus = 0;
+      let balitaL = 0, balitaP = 0, lansiaL = 0, lansiaP = 0, wus = 0, pus = 0;
       list.forEach(a => {
         const kat = kalkulasiKategoriAnggota(a);
-        if (kat.isBalita) balita++;
-        if (kat.isLansia) lansia++;
+        if (kat.isBalitaL) balitaL++;
+        if (kat.isBalitaP) balitaP++;
+        if (kat.isLansiaL) lansiaL++;
+        if (kat.isLansiaP) lansiaP++;
         if (kat.isWus)    wus++;
-        if (kat.isPus)    pus = 1;
+        if (kat.isPus)    pus++;
       });
-      kkObj.balitaL = balita;   // sederhana: simpan ke balitaL
-      kkObj.balitaP = 0;
-      kkObj.lansia  = lansia;
+      kkObj.balitaL = balitaL;
+      kkObj.balitaP = balitaP;
+      kkObj.lansiaL = lansiaL;
+      kkObj.lansiaP = lansiaP;
+      kkObj.lansia  = lansiaL + lansiaP;
       kkObj.wus     = wus;
       kkObj.pus     = pus;
 
@@ -2099,6 +2126,29 @@
         kkObj.nikHead = head.nik;
       }
       return kkObj;
+    }
+
+    /**
+     * Auto sync nilai Laki-laki & Perempuan di modal Form KK
+     * Laki-laki meliputi Balita L + Lansia L + PUS
+     * Perempuan meliputi Balita P + Lansia P + WUS
+     */
+    function autoSyncDemografiForm() {
+      const bL = Number(document.getElementById('f-balita-l')?.value) || 0;
+      const bP = Number(document.getElementById('f-balita-p')?.value) || 0;
+      const lnsL = Number(document.getElementById('f-lansia-l')?.value) || 0;
+      const lnsP = Number(document.getElementById('f-lansia-p')?.value) || 0;
+      const pus = Number(document.getElementById('f-pus')?.value) || 0;
+      const wus = Number(document.getElementById('f-wus')?.value) || 0;
+
+      const fLansia = document.getElementById('f-lansia');
+      if (fLansia) fLansia.value = lnsL + lnsP;
+
+      const fLaki = document.getElementById('f-laki');
+      if (fLaki) fLaki.value = bL + lnsL + pus;
+
+      const fPerempuan = document.getElementById('f-perempuan');
+      if (fPerempuan) fPerempuan.value = bP + lnsP + wus;
     }
 
     // Dipanggil saat tanggal lahir berubah — isi usia otomatis + update preview kategori
@@ -2534,20 +2584,111 @@
         filtered = keluargaData.filter(k => (k.dawis || '').trim().toLowerCase() === dawisFilter.trim().toLowerCase());
       }
 
+      // 1. Total KK = Dilihat dari jumlah kepala rumah tangga (setiap data KK merepresentasikan 1 kepala keluarga)
       const totalKK = filtered.length;
-      const totalWarga = filtered.reduce((acc, k) => acc + Number(k.totalAnggota || 0), 0);
-      const totalLaki = filtered.reduce((acc, k) => acc + Number(k.laki || 0), 0);
-      const totalPerempuan = filtered.reduce((acc, k) => acc + Number(k.perempuan || 0), 0);
-      const totalBalita = filtered.reduce((acc, k) => acc + (Number(k.balitaL || 0) + Number(k.balitaP || 0)), 0);
-      const totalLansia = filtered.reduce((acc, k) => acc + Number(k.lansia || 0), 0);
-      const totalPus = filtered.reduce((acc, k) => acc + Number(k.pus || 0), 0);
-      const totalWus = filtered.reduce((acc, k) => acc + Number(k.wus || 0), 0);
+
+      // 2. Total Warga = Berisi seluruh data anggota yang ada di menu manajemen kk
+      const totalWarga = filtered.reduce((acc, k) => {
+        const jmlAnggota = (k.anggotaList && k.anggotaList.length > 0)
+          ? k.anggotaList.length
+          : (Number(k.totalAnggota) || (Number(k.laki || 0) + Number(k.perempuan || 0)));
+        return acc + jmlAnggota;
+      }, 0);
+
+      // 3. Laki-laki = Meliputi balita laki2, lansia laki-laki, pus (pria usia subur)
+      const totalLaki = filtered.reduce((acc, k) => {
+        if (k.anggotaList && k.anggotaList.length > 0) {
+          return acc + k.anggotaList.filter(a => {
+            const jk = (a.jenisKelamin || a.jk || '').toLowerCase();
+            return jk.includes('laki') || jk.includes('pria') || jk === 'l';
+          }).length;
+        }
+        const bL = Number(k.balitaL || 0);
+        const lnsL = Number(k.lansiaL !== undefined ? k.lansiaL : (k.lansia || 0));
+        const pus = Number(k.pus || 0);
+        const demografiL = bL + lnsL + pus;
+        return acc + (Number(k.laki || 0) > 0 ? Math.max(Number(k.laki), demografiL) : demografiL);
+      }, 0);
+
+      // 4. Perempuan = Meliputi balita perempuan, lansia perempuan dan wus (wanita usia subur)
+      const totalPerempuan = filtered.reduce((acc, k) => {
+        if (k.anggotaList && k.anggotaList.length > 0) {
+          return acc + k.anggotaList.filter(a => {
+            const jk = (a.jenisKelamin || a.jk || '').toLowerCase();
+            return jk.includes('perempuan') || jk.includes('wanita') || jk === 'p';
+          }).length;
+        }
+        const bP = Number(k.balitaP || 0);
+        const lnsP = Number(k.lansiaP !== undefined ? k.lansiaP : 0);
+        const wus = Number(k.wus || 0);
+        const demografiP = bP + lnsP + wus;
+        return acc + (Number(k.perempuan || 0) > 0 ? Math.max(Number(k.perempuan), demografiP) : demografiP);
+      }, 0);
+
+      // 5. Balita, Lansia, PUS, WUS, Ibu Hamil, Ibu Menyusui sesuai data yg ada dan terisi di manajemen kk
+      const totalBalita = filtered.reduce((acc, k) => {
+        if (k.anggotaList && k.anggotaList.length > 0) {
+          return acc + k.anggotaList.filter(a => kalkulasiKategoriAnggota(a).isBalita).length;
+        }
+        return acc + (Number(k.balitaL || 0) + Number(k.balitaP || 0));
+      }, 0);
+
+      const totalLansia = filtered.reduce((acc, k) => {
+        if (k.anggotaList && k.anggotaList.length > 0) {
+          return acc + k.anggotaList.filter(a => kalkulasiKategoriAnggota(a).isLansia).length;
+        }
+        return acc + (Number(k.lansiaL || 0) + Number(k.lansiaP || 0) || Number(k.lansia || 0));
+      }, 0);
+
+      const totalPus = filtered.reduce((acc, k) => {
+        if (k.anggotaList && k.anggotaList.length > 0) {
+          return acc + k.anggotaList.filter(a => kalkulasiKategoriAnggota(a).isPus).length;
+        }
+        return acc + Number(k.pus || 0);
+      }, 0);
+
+      const totalWus = filtered.reduce((acc, k) => {
+        if (k.anggotaList && k.anggotaList.length > 0) {
+          return acc + k.anggotaList.filter(a => kalkulasiKategoriAnggota(a).isWus).length;
+        }
+        return acc + Number(k.wus || 0);
+      }, 0);
+
       const totalHamil = filtered.reduce((acc, k) => acc + Number(k.hamil || 0), 0);
       const totalMenyusui = filtered.reduce((acc, k) => acc + Number(k.menyusui || 0), 0);
       const totalTunaHuruf = filtered.reduce((acc, k) => acc + Number(k.tunaHuruf || 0), 0);
       const totalTunaNetra = filtered.reduce((acc, k) => acc + Number(k.tunaNetra || 0), 0);
       const totalTunaRungu = filtered.reduce((acc, k) => acc + Number(k.tunaRungu || 0), 0);
       const totalKhusus = filtered.reduce((acc, k) => acc + Number(k.khusus || 0), 0);
+
+      // Fasilitas sanitasi
+      const totalSampah = filtered.filter(k => k.tempatSampah).length;
+      const totalSpal = filtered.filter(k => k.spal).length;
+      const totalJamban = filtered.filter(k => k.jamban).length;
+
+      // SET SEMUA VALUE KE TILE DOM SECARA REAKTIF & AKURAT
+      const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      };
+
+      setVal('rk-kk', totalKK);
+      setVal('rk-warga', totalWarga);
+      setVal('rk-laki', totalLaki);
+      setVal('rk-perempuan', totalPerempuan);
+      setVal('rk-balita', totalBalita);
+      setVal('rk-lansia', totalLansia);
+      setVal('rk-pus', totalPus);
+      setVal('rk-wus', totalWus);
+      setVal('rk-hamil', totalHamil);
+      setVal('rk-menyusui', totalMenyusui);
+      setVal('rk-tuna-huruf', totalTunaHuruf);
+      setVal('rk-tuna-netra', totalTunaNetra);
+      setVal('rk-tuna-rungu', totalTunaRungu);
+      setVal('rk-khusus', totalKhusus);
+      setVal('rk-sampah', totalSampah);
+      setVal('rk-spal', totalSpal);
+      setVal('rk-jamban', totalJamban);
 
       updateRLHWidgetStats(filtered);
 
@@ -2563,29 +2704,48 @@
         tbody.innerHTML = filtered.map((k, idx) => {
           const res = hitungSkorRLH(k);
           const rlhBadge = renderRLHBadgeHtml(k);
+          const bL = Number(k.balitaL || 0);
+          const bP = Number(k.balitaP || 0);
+          const lnsL = Number(k.lansiaL !== undefined ? k.lansiaL : (k.lansia || 0));
+          const lnsP = Number(k.lansiaP !== undefined ? k.lansiaP : 0);
+          const pusVal = Number(k.pus || 0);
+          const wusVal = Number(k.wus || 0);
+
+          const kLaki = (k.anggotaList && k.anggotaList.length > 0)
+            ? k.anggotaList.filter(a => (a.jenisKelamin || '').toLowerCase().includes('laki')).length
+            : (Number(k.laki || 0) > 0 ? Math.max(Number(k.laki), bL + lnsL + pusVal) : (bL + lnsL + pusVal));
+
+          const kPerempuan = (k.anggotaList && k.anggotaList.length > 0)
+            ? k.anggotaList.filter(a => (a.jenisKelamin || '').toLowerCase().includes('perempuan')).length
+            : (Number(k.perempuan || 0) > 0 ? Math.max(Number(k.perempuan), bP + lnsP + wusVal) : (bP + lnsP + wusVal));
+
+          const kAnggota = (k.anggotaList && k.anggotaList.length > 0)
+            ? k.anggotaList.length
+            : (Number(k.totalAnggota) || (kLaki + kPerempuan));
+
           return `
           <tr>
             <td>${idx + 1}</td>
             <td><strong style="color:var(--primary-blue-dark);">${k.nama}</strong></td>
             <td>RT ${k.rt} / RW ${k.rw}</td>
             <td>${k.dawis}</td>
-            <td>${k.totalAnggota}</td>
-            <td>${k.laki}</td>
-            <td>${k.perempuan}</td>
-            <td>${k.balitaL}</td>
-            <td>${k.balitaP}</td>
-            <td>${k.lansia}</td>
-            <td>${k.pus}</td>
-            <td>${k.wus}</td>
-            <td>${k.hamil}</td>
-            <td>${k.menyusui}</td>
-            <td>${k.tunaHuruf}</td>
-            <td>${k.tunaNetra}</td>
-            <td>${k.tunaRungu}</td>
-            <td>${k.khusus}</td>
+            <td><strong>${kAnggota}</strong></td>
+            <td>${kLaki}</td>
+            <td>${kPerempuan}</td>
+            <td>${bL}</td>
+            <td>${bP}</td>
+            <td>${lnsL + lnsP || k.lansia || 0}</td>
+            <td>${pusVal}</td>
+            <td>${wusVal}</td>
+            <td>${k.hamil || 0}</td>
+            <td>${k.menyusui || 0}</td>
+            <td>${k.tunaHuruf || 0}</td>
+            <td>${k.tunaNetra || 0}</td>
+            <td>${k.tunaRungu || 0}</td>
+            <td>${k.khusus || 0}</td>
             <td><strong style="color:var(--primary-blue-dark);">${res.skor} Pts</strong></td>
             <td>${rlhBadge}</td>
-            <td>${k.sumberAir}</td>
+            <td>${k.sumberAir || 'PDAM'}</td>
             <td>${k.namaBantuan || '-'}</td>
           </tr>`;
         }).join('');
@@ -2750,8 +2910,10 @@
       document.getElementById('f-perempuan').value = '0';
       document.getElementById('f-balita-l').value = '0';
       document.getElementById('f-balita-p').value = '0';
+      document.getElementById('f-lansia-l').value = '0';
+      document.getElementById('f-lansia-p').value = '0';
       document.getElementById('f-lansia').value = '0';
-      document.getElementById('f-pus').value = '0';
+      document.getElementById('f-pus').value = '1';
       document.getElementById('f-wus').value = '0';
       document.getElementById('f-hamil').value = '0';
       document.getElementById('f-menyusui').value = '0';
@@ -2783,11 +2945,11 @@
       document.getElementById('f-rt').value = item.rt || '1';
       document.getElementById('f-rw').value = item.rw || '4';
       document.getElementById('f-dawis').value = item.dawis || 'dahlia 9';
-      document.getElementById('f-laki').value = item.laki || 0;
-      document.getElementById('f-perempuan').value = item.perempuan || 0;
       document.getElementById('f-balita-l').value = item.balitaL || 0;
       document.getElementById('f-balita-p').value = item.balitaP || 0;
-      document.getElementById('f-lansia').value = item.lansia || 0;
+      document.getElementById('f-lansia-l').value = item.lansiaL !== undefined ? item.lansiaL : (item.lansia || 0);
+      document.getElementById('f-lansia-p').value = item.lansiaP || 0;
+      document.getElementById('f-lansia').value = (Number(item.lansiaL || 0) + Number(item.lansiaP || 0)) || item.lansia || 0;
       document.getElementById('f-pus').value = item.pus || 0;
       document.getElementById('f-wus').value = item.wus || 0;
       document.getElementById('f-hamil').value = item.hamil || 0;
@@ -2796,6 +2958,8 @@
       document.getElementById('f-tuna-huruf').value = item.tunaHuruf || 0;
       document.getElementById('f-tuna-netra').value = item.tunaNetra || 0;
       document.getElementById('f-tuna-rungu').value = item.tunaRungu || 0;
+      document.getElementById('f-laki').value = item.laki !== undefined ? item.laki : (Number(item.balitaL || 0) + Number(item.lansiaL || item.lansia || 0) + Number(item.pus || 0));
+      document.getElementById('f-perempuan').value = item.perempuan !== undefined ? item.perempuan : (Number(item.balitaP || 0) + Number(item.lansiaP || 0) + Number(item.wus || 0));
       document.getElementById('f-kriteria').value = item.kriteriaRumah || 'Sehat Layak Huni';
       document.getElementById('f-air').value = item.sumberAir || 'PDAM';
       document.getElementById('f-pokok').value = item.makananPokok || 'Beras';
@@ -2819,8 +2983,33 @@
       const nama = document.getElementById('f-nama').value.trim();
       if (!nama) return alert('Nama Kepala Keluarga wajib diisi!');
 
-      const laki      = Number(document.getElementById('f-laki').value) || 0;
-      const perempuan = Number(document.getElementById('f-perempuan').value) || 0;
+      const balitaL   = Number(document.getElementById('f-balita-l').value) || 0;
+      const balitaP   = Number(document.getElementById('f-balita-p').value) || 0;
+      const lansiaL   = Number(document.getElementById('f-lansia-l').value) || 0;
+      const lansiaP   = Number(document.getElementById('f-lansia-p').value) || 0;
+      const lansia    = (lansiaL + lansiaP) || Number(document.getElementById('f-lansia').value) || 0;
+      const pus       = Number(document.getElementById('f-pus').value) || 0;
+      const wus       = Number(document.getElementById('f-wus').value) || 0;
+
+      // Laki-laki meliputi balita laki2, lansia laki-laki, pus(pria usia subur)
+      let laki = Number(document.getElementById('f-laki').value);
+      const minLaki = balitaL + lansiaL + pus;
+      if (isNaN(laki) || laki === 0) {
+        laki = minLaki;
+      } else {
+        laki = Math.max(laki, minLaki);
+      }
+
+      // Perempuan meliputi balita perempuan, lansia perempuan dan wus (wanita usia subur)
+      let perempuan = Number(document.getElementById('f-perempuan').value);
+      const minPerempuan = balitaP + lansiaP + wus;
+      if (isNaN(perempuan) || perempuan === 0) {
+        perempuan = minPerempuan;
+      } else {
+        perempuan = Math.max(perempuan, minPerempuan);
+      }
+
+      const totalAnggota = laki + perempuan;
       const isBantuan = document.getElementById('f-is-bantuan').value === 'Ya';
 
       // Ambil nilai sanitasi & hitung skor RLH
@@ -2842,14 +3031,16 @@
         rt:   document.getElementById('f-rt').value.trim()   || '1',
         rw:   document.getElementById('f-rw').value.trim()   || '4',
         dawis: document.getElementById('f-dawis').value,
-        totalAnggota: laki + perempuan,
+        totalAnggota: totalAnggota,
         laki: laki,
         perempuan: perempuan,
-        balitaL:   Number(document.getElementById('f-balita-l').value)   || 0,
-        balitaP:   Number(document.getElementById('f-balita-p').value)   || 0,
-        lansia:    Number(document.getElementById('f-lansia').value)      || 0,
-        pus:       Number(document.getElementById('f-pus').value)         || 0,
-        wus:       Number(document.getElementById('f-wus').value)         || 0,
+        balitaL:   balitaL,
+        balitaP:   balitaP,
+        lansiaL:   lansiaL,
+        lansiaP:   lansiaP,
+        lansia:    lansia,
+        pus:       pus,
+        wus:       wus,
         hamil:     Number(document.getElementById('f-hamil').value)       || 0,
         menyusui:  Number(document.getElementById('f-menyusui').value)    || 0,
         khusus:    Number(document.getElementById('f-khusus').value)      || 0,

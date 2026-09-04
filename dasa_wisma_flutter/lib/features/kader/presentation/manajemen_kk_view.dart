@@ -483,26 +483,42 @@ class _ManajemenKkViewState extends State<ManajemenKkView> {
                           onPressed: () {
                             if (nameCtrl.text.trim().isEmpty) return;
 
-                            final newItem = KeluargaModel(
-                              id: isEdit ? item.id : DateTime.now().millisecondsSinceEpoch.toString(),
-                              noKk: isEdit ? item.noKk : '331901${DateTime.now().millisecondsSinceEpoch}',
-                              nikHead: isEdit ? item.nikHead : '331901${DateTime.now().millisecondsSinceEpoch}',
-                              namaKepalaKeluarga: nameCtrl.text.trim(),
-                              desa: desaCtrl.text.trim().isNotEmpty ? desaCtrl.text.trim() : 'Japan',
-                              alamat: alamatCtrl.text.trim(),
-                              rt: isEdit ? item.rt : '1',
-                              rw: isEdit ? item.rw : '2',
-                              dawis: dawisCtrl.text.trim().isNotEmpty ? dawisCtrl.text.trim() : 'Dahlia 1',
-                              totalAnggota: int.tryParse(totalAnggotaCtrl.text) ?? 1,
-                              jumlahLakiLaki: int.tryParse(lakiCtrl.text) ?? 0,
-                              jumlahPerempuan: int.tryParse(perempuanCtrl.text) ?? 0,
-                              balitaLaki: int.tryParse(balitaLakiCtrl.text) ?? 0,
-                              balitaPerempuan: int.tryParse(balitaPerempuanCtrl.text) ?? 0,
-                              jumlahLansia: int.tryParse(lansiaCtrl.text) ?? 0,
-                              jumlahPus: int.tryParse(pusCtrl.text) ?? 0,
-                              jumlahWus: int.tryParse(wusCtrl.text) ?? 0,
-                              jumlahIbuHamil: int.tryParse(hamilCtrl.text) ?? 0,
-                              jumlahIbuMenyusui: int.tryParse(ibuMenyusuiCtrl.text) ?? 0,
+                              int bLaki = int.tryParse(balitaLakiCtrl.text) ?? 0;
+                              int bPerempuan = int.tryParse(balitaPerempuanCtrl.text) ?? 0;
+                              int jLansia = int.tryParse(lansiaCtrl.text) ?? 0;
+                              int jPus = int.tryParse(pusCtrl.text) ?? 0;
+                              int jWus = int.tryParse(wusCtrl.text) ?? 0;
+
+                              int inputLaki = int.tryParse(lakiCtrl.text) ?? 0;
+                              int minLaki = bLaki + jLansia + jPus;
+                              int finalLaki = inputLaki > 0 ? (inputLaki < minLaki ? minLaki : inputLaki) : minLaki;
+
+                              int inputPerempuan = int.tryParse(perempuanCtrl.text) ?? 0;
+                              int minPerempuan = bPerempuan + jWus;
+                              int finalPerempuan = inputPerempuan > 0 ? (inputPerempuan < minPerempuan ? minPerempuan : inputPerempuan) : minPerempuan;
+
+                              int finalTotal = finalLaki + finalPerempuan;
+
+                              final newItem = KeluargaModel(
+                                id: isEdit ? item.id : DateTime.now().millisecondsSinceEpoch.toString(),
+                                noKk: isEdit ? item.noKk : '331901${DateTime.now().millisecondsSinceEpoch}',
+                                nikHead: isEdit ? item.nikHead : '331901${DateTime.now().millisecondsSinceEpoch}',
+                                namaKepalaKeluarga: nameCtrl.text.trim(),
+                                desa: desaCtrl.text.trim().isNotEmpty ? desaCtrl.text.trim() : 'Japan',
+                                alamat: alamatCtrl.text.trim(),
+                                rt: isEdit ? item.rt : '1',
+                                rw: isEdit ? item.rw : '2',
+                                dawis: dawisCtrl.text.trim().isNotEmpty ? dawisCtrl.text.trim() : 'Dahlia 1',
+                                totalAnggota: finalTotal > 0 ? finalTotal : (int.tryParse(totalAnggotaCtrl.text) ?? 1),
+                                jumlahLakiLaki: finalLaki,
+                                jumlahPerempuan: finalPerempuan,
+                                balitaLaki: bLaki,
+                                balitaPerempuan: bPerempuan,
+                                jumlahLansia: jLansia,
+                                jumlahPus: jPus,
+                                jumlahWus: jWus,
+                                jumlahIbuHamil: int.tryParse(hamilCtrl.text) ?? 0,
+                                jumlahIbuMenyusui: int.tryParse(ibuMenyusuiCtrl.text) ?? 0,
                               tunaHuruf: int.tryParse(tunaHurufCtrl.text) ?? 0,
                               tunaNetra: int.tryParse(tunaNetraCtrl.text) ?? 0,
                               tunaRungu: int.tryParse(tunaRunguCtrl.text) ?? 0,
