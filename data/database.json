@@ -1,0 +1,237 @@
+{
+    "keluargaData": [
+        {
+            "id": "1",
+            "nikHead": "3319011205800002",
+            "nama": "Budi Santoso",
+            "desa": "Japan",
+            "rt": "1",
+            "rw": "4",
+            "dawis": "Dahlia 1",
+            "totalAnggota": 3,
+            "laki": 1,
+            "perempuan": 2,
+            "balitaL": 0,
+            "balitaP": 1,
+            "lansiaL": 0,
+            "lansiaP": 0,
+            "lansia": 0,
+            "pus": 1,
+            "wus": 1,
+            "hamil": 1,
+            "menyusui": 1,
+            "tunaHuruf": 1,
+            "tunaNetra": 1,
+            "tunaRungu": 0,
+            "khusus": 0,
+            "kriteriaRumah": "Sehat Layak Huni",
+            "tempatSampah": true,
+            "spal": true,
+            "jamban": true,
+            "p4k": true,
+            "sumberAir": "PDAM",
+            "makananPokok": "Beras",
+            "partisipasi": "UP2K",
+            "isPenerimaBantuan": true,
+            "namaBantuan": "PJK",
+            "anggotaList": [
+                {
+                    "nik": "3319011205800002",
+                    "nama": "Budi Santoso",
+                    "hubungan": "Kepala Keluarga",
+                    "jenisKelamin": "Laki-laki",
+                    "usia": 45,
+                    "isHead": true
+                },
+                {
+                    "nik": "3319015506820003",
+                    "nama": "Siti Aminah",
+                    "hubungan": "Istri",
+                    "jenisKelamin": "Perempuan",
+                    "usia": 40,
+                    "isHead": false
+                },
+                {
+                    "nik": "3319016003210001",
+                    "nama": "Rina Santoso",
+                    "hubungan": "Anak",
+                    "jenisKelamin": "Perempuan",
+                    "usia": 3,
+                    "isHead": false
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "nikHead": "3319011508850005",
+            "nama": "Slamet Riyadi",
+            "desa": "Japan",
+            "rt": "2",
+            "rw": "4",
+            "dawis": "Dahlia 2",
+            "totalAnggota": 4,
+            "laki": 3,
+            "perempuan": 1,
+            "balitaL": 1,
+            "balitaP": 0,
+            "lansiaL": 1,
+            "lansiaP": 0,
+            "lansia": 1,
+            "pus": 1,
+            "wus": 1,
+            "hamil": 0,
+            "menyusui": 1,
+            "tunaHuruf": 0,
+            "tunaNetra": 0,
+            "tunaRungu": 1,
+            "khusus": 1,
+            "kriteriaRumah": "RTLH Ringan \/ Sedang",
+            "tempatSampah": false,
+            "spal": false,
+            "jamban": true,
+            "p4k": true,
+            "sumberAir": "Sumur",
+            "makananPokok": "Beras",
+            "partisipasi": "UP2K",
+            "isPenerimaBantuan": true,
+            "namaBantuan": "PJK",
+            "anggotaList": [
+                {
+                    "nik": "3319011508850005",
+                    "nama": "Slamet Riyadi",
+                    "hubungan": "Kepala Keluarga",
+                    "jenisKelamin": "Laki-laki",
+                    "usia": 50,
+                    "isHead": true
+                },
+                {
+                    "nik": "3319015809860002",
+                    "nama": "Sri Wahyuni",
+                    "hubungan": "Istri",
+                    "jenisKelamin": "Perempuan",
+                    "usia": 42,
+                    "isHead": false
+                },
+                {
+                    "nik": "3319010107540001",
+                    "nama": "Mbah Joyo",
+                    "hubungan": "Orang Tua",
+                    "jenisKelamin": "Laki-laki",
+                    "usia": 70,
+                    "isHead": false
+                },
+                {
+                    "nik": "3319011204220003",
+                    "nama": "Doni Riyadi",
+                    "hubungan": "Anak",
+                    "jenisKelamin": "Laki-laki",
+                    "usia": 4,
+                    "isHead": false
+                }
+            ]
+        }
+    ],
+    "akunWargaList": [
+        {
+            "id": "aw1",
+            "kkId": "1",
+            "nama": "Budi Santoso",
+            "email": "budi.santoso@japan.desa.id",
+            "nik": "3319011205800002",
+            "password": "123"
+        },
+        {
+            "id": "aw2",
+            "kkId": "2",
+            "nama": "Slamet Riyadi",
+            "email": "slamet.riyadi@japan.desa.id",
+            "nik": "3319011508850005",
+            "password": "123"
+        }
+    ],
+    "allUsers": [
+        {
+            "id": "u1",
+            "username": "3319011205800002",
+            "email": "budi.santoso@japan.desa.id",
+            "nama": "Budi Santoso",
+            "role": "warga",
+            "password": "123"
+        },
+        {
+            "id": "u2",
+            "username": "kader",
+            "email": "kader@japan.desa.id",
+            "nama": "Siti Aminah (Kader)",
+            "role": "kader",
+            "password": "123"
+        },
+        {
+            "id": "u3",
+            "username": "kades",
+            "email": "kades@japan.desa.id",
+            "nama": "Bapak Kepala Desa",
+            "role": "kades",
+            "password": "123"
+        }
+    ],
+    "bantuanRecords": [
+        {
+            "id": "1",
+            "nama": "Budi Santoso",
+            "jenis": "PKH"
+        },
+        {
+            "id": "2",
+            "nama": "arjun naja",
+            "jenis": "PKH"
+        },
+        {
+            "id": "3",
+            "nama": "Budi Santoso r",
+            "jenis": "PJK"
+        },
+        {
+            "id": "4",
+            "nama": "arjun",
+            "jenis": "PKH"
+        },
+        {
+            "id": "5",
+            "nama": "arjun naja",
+            "jenis": "PJK"
+        },
+        {
+            "id": "6",
+            "nama": "Budi Santoso",
+            "jenis": "PJK"
+        }
+    ],
+    "bantuanTags": [
+        "PKH",
+        "BPNT",
+        "BLT"
+    ],
+    "masterDawisList": [
+        {
+            "nama": "dahlia 9",
+            "rt": "3",
+            "rw": "4"
+        },
+        {
+            "nama": "dahlia 1",
+            "rt": "1",
+            "rw": "4"
+        },
+        {
+            "nama": "dahlia 2",
+            "rt": "2",
+            "rw": "4"
+        },
+        {
+            "nama": "mawar 2",
+            "rt": "2",
+            "rw": "4"
+        }
+    ]
+}

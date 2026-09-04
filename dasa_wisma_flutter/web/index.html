@@ -1110,18 +1110,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- CARD ANGGOTA KELUARGA AKTIF -->
-            <div class="info-card-box" style="width:320px; margin-bottom:0; padding:18px;">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div style="display:flex; align-items:center; gap:6px;">
-                  <span class="material-icons-outlined" style="color:var(--primary-blue); font-size:18px;">person_outline</span>
-                  <strong style="font-size:14px;">Anggota Keluarga Aktif</strong>
-                </div>
-                <a href="#" style="font-size:12px; font-weight:700; color:var(--primary-blue); text-decoration:none;">Pilih KK</a>
-              </div>
-              <p style="font-size:12px; color:var(--text-medium); margin-top:8px; line-height:1.4;">Klik nama Kepala Keluarga di tabel untuk melihat & menambah anggota keluarga.</p>
-            </div>
           </div>
 
 
@@ -1760,6 +1748,67 @@
       { nama: 'mawar 2', rt: '2', rw: '4' }
     ];
 
+    let akunWargaList = [
+      { id: 'aw1', kkId: '1', nama: 'Budi Santoso', email: 'budi.santoso@japan.desa.id', nik: '3319011205800002', password: '123' },
+      { id: 'aw2', kkId: '2', nama: 'Slamet Riyadi', email: 'slamet.riyadi@japan.desa.id', nik: '3319011508850005', password: '123' }
+    ];
+
+    let allUsers = [
+      { id: 'u1', username: '3319011205800002', email: 'budi.santoso@japan.desa.id', nama: 'Budi Santoso', role: 'warga', password: '123' },
+      { id: 'u2', username: 'kader', email: 'kader@japan.desa.id', nama: 'Siti Aminah (Kader)', role: 'kader', password: '123' },
+      { id: 'u3', username: 'kades', email: 'kades@japan.desa.id', nama: 'Bapak Kepala Desa', role: 'kades', password: '123' }
+    ];
+
+    // ========== PERSISTENSI DATABASE (LOCALSTORAGE & SERVER SYNC) ==========
+    const DB_STORAGE_KEY = 'DB_DAWIS_SYSTEM_DATA_V2';
+
+    function saveDb() {
+      try {
+        const payload = {
+          keluargaData,
+          akunWargaList,
+          allUsers,
+          bantuanRecords,
+          bantuanTags,
+          masterDawisList
+        };
+        localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(payload));
+
+        // Background server sync via api.php jika tersedia
+        if (window.fetch) {
+          fetch('api.php?action=save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }).catch(err => console.log('Background server sync:', err));
+        }
+      } catch (e) {
+        console.error('Gagal menyimpan ke database:', e);
+      }
+    }
+
+    function loadDb() {
+      try {
+        const saved = localStorage.getItem(DB_STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.keluargaData && Array.isArray(parsed.keluargaData) && parsed.keluargaData.length > 0) keluargaData = parsed.keluargaData;
+          if (parsed.akunWargaList && Array.isArray(parsed.akunWargaList)) akunWargaList = parsed.akunWargaList;
+          if (parsed.allUsers && Array.isArray(parsed.allUsers)) allUsers = parsed.allUsers;
+          if (parsed.bantuanRecords && Array.isArray(parsed.bantuanRecords)) bantuanRecords = parsed.bantuanRecords;
+          if (parsed.bantuanTags && Array.isArray(parsed.bantuanTags)) bantuanTags = parsed.bantuanTags;
+          if (parsed.masterDawisList && Array.isArray(parsed.masterDawisList)) masterDawisList = parsed.masterDawisList;
+        } else {
+          saveDb();
+        }
+      } catch (e) {
+        console.error('Gagal memuat database dari localStorage:', e);
+      }
+    }
+
+    // Auto load persistent data on script execution
+    loadDb();
+
     function getAllDawisList() {
       const map = new Map();
       masterDawisList.forEach(d => {
@@ -1784,6 +1833,7 @@
         masterDawisList.push({ nama: clean, rt: rt || '1', rw: rw || '4' });
       }
       renderAllDawisDropdowns();
+      saveDb();
     }
 
     function onAkunDawisChange() {
@@ -2703,7 +2753,6 @@
             <td>${k.tunaNetra || 0}</td>
             <td>${k.tunaRungu || 0}</td>
             <td>${k.khusus || 0}</td>
-            <td><strong style="color:var(--primary-blue-dark);">${res.skor} Pts</strong></td>
             <td>${rlhBadge}</td>
             <td>${k.sumberAir || 'PDAM'}</td>
             <td>${k.namaBantuan || '-'}</td>
@@ -2754,10 +2803,9 @@
           <td>${k.tunaNetra}</td>
           <td>${k.tunaRungu}</td>
           <td>${k.khusus}</td>
-          <td><strong style="color:var(--primary-blue-dark);">${res.skor} Pts</strong></td>
           <td>${rlhBadge}</td>
-          <td>${k.sumberAir}</td>
-          <td>${k.makananPokok}</td>
+          <td>${k.sumberAir || 'PDAM'}</td>
+          <td>${k.makananPokok || 'Beras'}</td>
           <td>${k.namaBantuan || '-'}</td>
           <td>
             <button class="btn-action-green" onclick="openAddAnggotaModal('${k.id}')">Tambah Anggota</button>
@@ -2799,12 +2847,14 @@
       if (val && !bantuanTags.includes(val)) {
         bantuanTags.push(val);
         document.getElementById('new-tag-input').value = '';
+        saveDb();
         renderManajemenBantuan();
       }
     }
 
     function removeBantuanTag(tag) {
       bantuanTags = bantuanTags.filter(t => t !== tag);
+      saveDb();
       renderManajemenBantuan();
     }
 
@@ -2814,6 +2864,7 @@
         const jenis = prompt(`Masukkan Jenis Bantuan (${bantuanTags.join(', ')}):`, bantuanTags[0] || 'PKH');
         if (jenis) {
           bantuanRecords.push({ id: Date.now().toString(), nama: nama, jenis: jenis });
+          saveDb();
           renderManajemenBantuan();
         }
       }
@@ -2822,6 +2873,7 @@
     function deleteBantuanRecord(id) {
       if (confirm('Apakah Anda yakin ingin menghapus data bantuan ini?')) {
         bantuanRecords = bantuanRecords.filter(b => b.id !== id);
+        saveDb();
         renderManajemenBantuan();
       }
     }
@@ -2851,6 +2903,7 @@
 
       item.anggotaList.push({ nik, nama, hubungan, jenisKelamin: jk, usia });
       syncAgregatKk(item);
+      saveDb();
 
       closeAnggotaModal();
       renderKaderTable();
@@ -3028,6 +3081,7 @@
       }
 
       closeModal();
+      saveDb();
       renderKaderTable();
       renderRekapData();
       renderDashboardStats();
@@ -3036,16 +3090,13 @@
     function deleteKk(id) {
       if (confirm('Apakah Anda yakin ingin menghapus data KK ini?')) {
         keluargaData = keluargaData.filter(k => k.id !== id);
+        saveDb();
         renderKaderTable();
         renderRekapData();
       }
     }
 
     // ========== BUAT AKUN WARGA & MANAJEMEN KK (KADER) ==========
-    let akunWargaList = [
-      { id: 'aw1', kkId: '1', nama: 'Budi Santoso', email: 'budi.santoso@japan.desa.id', nik: '3319011205800002', password: '123' }
-    ];
-
     function renderBuatAkunWarga() {
       renderAllDawisDropdowns();
       renderAkunWargaTable();
@@ -3131,8 +3182,10 @@
       }
 
       renderAllDawisDropdowns();
+      saveDb();
       renderAkunWargaTable();
       renderKaderTable();
+      renderRekapData();
       alert(`Berhasil menambah KK & membuat Akun Warga baru!\n(Dawis: ${dawis}, RT ${rt}/RW ${rw})`);
     }
 
@@ -3285,6 +3338,7 @@
       renderAkunWargaTable();
       renderKaderTable();
       renderRekapData();
+      saveDb();
       alert(`✅ "${targetAnggota.nama}" ditetapkan sebagai Kepala Keluarga.\nData Manajemen KK & Rekap otomatis ter-update.`);
     }
 
@@ -3332,6 +3386,7 @@
         renderAkunWargaTable();
         renderKaderTable();
         renderRekapData();
+        saveDb();
       }
 
       // Reset form
@@ -3352,6 +3407,7 @@
         k.anggotaList = k.anggotaList.filter(a => a.nik !== nik);
         // Recalculate semua agregat termasuk demografi
         syncAgregatKk(k);
+        saveDb();
         renderKelolaAnggotaTable();
         renderAkunWargaTable();
         renderKaderTable();
@@ -3385,6 +3441,7 @@
           password: newPass
         });
       }
+      saveDb();
       renderAkunWargaTable();
     }
 
@@ -3392,18 +3449,14 @@
       if (confirm('Apakah Anda yakin ingin menghapus data KK & Akun Warga ini?')) {
         keluargaData = keluargaData.filter(k => k.id !== kkId);
         akunWargaList = akunWargaList.filter(a => a.kkId !== kkId);
+        saveDb();
         renderAkunWargaTable();
         renderKaderTable();
+        renderRekapData();
       }
     }
 
     // ========== MANAJEMEN USER (KADER & KADES) ==========
-    let allUsers = [
-      { id: 'u1', username: '3319011205800002', email: 'budi.santoso@japan.desa.id', nama: 'Budi Santoso', role: 'warga', password: '123' },
-      { id: 'u2', username: 'kader', email: 'kader@japan.desa.id', nama: 'Siti Aminah (Kader)', role: 'kader', password: '123' },
-      { id: 'u3', username: 'kades', email: 'kades@japan.desa.id', nama: 'Bapak Kepala Desa', role: 'kades', password: '123' }
-    ];
-
     function renderUserTable() {
       const tbody = document.getElementById('user-table-body');
       if (!tbody) return;
@@ -3456,6 +3509,7 @@
         role: role || 'warga',
         password: password
       });
+      saveDb();
       renderUserTable();
     }
 
@@ -3471,12 +3525,14 @@
       user.nama = newNama;
       user.email = newEmail;
       user.password = newPass;
+      saveDb();
       renderUserTable();
     }
 
     function hapusUser(id) {
       if (confirm('Hapus user ini?')) {
         allUsers = allUsers.filter(u => u.id !== id);
+        saveDb();
         renderUserTable();
       }
     }
