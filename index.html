@@ -6,22 +6,24 @@
   <title>Sistem Informasi Dasa Wisma Desa Japan</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round" rel="stylesheet">
   
   <style>
-    * {
+    *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-family: 'Poppins', system-ui, -apple-system, sans-serif;
     }
 
-    body {
+    html, body {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
       background-color: #f8fafc;
       color: #1e293b;
       min-height: 100vh;
-      overflow-x: hidden;
     }
 
     /* COLOR PALETTE */
@@ -129,6 +131,11 @@
       flex-shrink: 0;
     }
 
+    .role-info {
+      flex: 1;
+      min-width: 0;
+    }
+
     .role-info h4 {
       font-size: 15px;
       font-weight: 700;
@@ -139,6 +146,7 @@
       font-size: 12px;
       color: var(--text-medium);
       margin-top: 2px;
+      word-break: break-word;
     }
 
     /* SCREEN 2: MAIN DASHBOARD LAYOUT */
@@ -162,6 +170,27 @@
       z-index: 50;
     }
 
+    .btn-hamburger {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: #ffffff;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .btn-hamburger:hover {
+      background: #f1f5f9;
+      border-color: var(--primary-blue);
+      color: var(--primary-blue);
+    }
+
     .header-brand {
       display: flex;
       align-items: center;
@@ -177,12 +206,21 @@
       align-items: center;
       justify-content: center;
       color: #ffffff;
+      flex-shrink: 0;
     }
 
     .brand-titles h1 {
       font-size: 15px;
       font-weight: 700;
       color: var(--text-dark);
+    }
+
+    .brand-title-full {
+      display: block;
+    }
+
+    .brand-title-mobile {
+      display: none;
     }
 
     .brand-titles p {
@@ -193,6 +231,33 @@
       align-items: center;
       gap: 2px;
       margin-top: 1px;
+    }
+
+    /* SIDEBAR OVERLAY FOR MOBILE */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(3px);
+      z-index: 999;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .sidebar-overlay.active {
+      display: block;
+      opacity: 1;
+    }
+
+    /* MOBILE DRAWER HEADER */
+    .sidebar-mobile-header {
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
     }
 
     .header-actions {
@@ -318,28 +383,106 @@
       color: #ffffff;
     }
 
-    /* COLLAPSE TOGGLE BUTTON */
-    .sidebar-toggle-btn {
-      position: absolute;
-      top: 24px;
-      right: -15px;
-      width: 30px;
-      height: 30px;
-      background: var(--primary-blue);
-      color: #ffffff;
-      border-radius: 50%;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
-      z-index: 20;
-      transition: transform 0.2s;
+    /* DESKTOP TABLE VIEW vs MOBILE CARDS VIEW */
+    .desktop-table-view {
+      display: block;
     }
 
-    .sidebar-toggle-btn:hover {
-      transform: scale(1.1);
+    .mobile-cards-view {
+      display: none;
+    }
+
+    /* MINIMALIST CARD STYLING FOR MOBILE (SATU PANDANGAN, NO HORIZONTAL SCROLL) */
+    .m-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      box-sizing: border-box;
+      transition: all 0.15s ease;
+    }
+
+    .m-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .m-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-dark);
+      line-height: 1.3;
+    }
+
+    .m-card-sub {
+      font-size: 11px;
+      color: var(--text-medium);
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .m-card-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 10px;
+      padding: 8px 10px;
+      background: #f8fafc;
+      border-radius: 10px;
+      border: 1px solid #f1f5f9;
+    }
+
+    .m-card-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .m-card-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .m-card-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-top: 1px;
+      word-break: break-word;
+    }
+
+    .m-card-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+
+    .m-card-actions .btn-action-blue,
+    .m-card-actions .btn-action-green,
+    .m-card-actions .btn-action-yellow,
+    .m-card-actions .btn-action-red,
+    .m-card-actions .btn-add {
+      padding: 6px 12px;
+      font-size: 11px;
+      border-radius: 8px;
+      flex: 1;
+      min-width: 65px;
+      text-align: center;
+      justify-content: center;
     }
 
     /* MAIN CONTENT VIEW PORT */
@@ -609,12 +752,57 @@
       margin-right: 8px;
     }
 
+    .btn-action-yellow {
+      color: #d97706;
+      font-weight: 700;
+      cursor: pointer;
+      background: none;
+      border: none;
+      margin-right: 8px;
+    }
+
     .btn-action-red {
       color: #ef4444;
       font-weight: 700;
       cursor: pointer;
       background: none;
       border: none;
+    }
+
+    .badge-menunggu {
+      background: #fef3c7;
+      color: #b45309;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge-disetujui {
+      background: var(--soft-green-bg);
+      color: var(--soft-green-text);
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge-ditolak {
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .btn-add {
@@ -752,6 +940,622 @@
       font-size: 11px;
       font-weight: 700;
     }
+
+    /* RESPONSIVE FORM & METRIC GRIDS */
+    .form-responsive-row-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .form-responsive-row-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .metric-grid-5col {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .btn-responsive-full {
+      /* standard desktop style */
+    }
+
+    /* COLLAPSED SIDEBAR RULES (PC) */
+    .sidebar.collapsed .menu-item span:not(.material-icons-outlined):not(.material-icons-round) {
+      display: none;
+    }
+
+    /* ========================================================= */
+    /* RESPONSIVE RULES FOR MOBILE (HP) & TABLET (<= 768px)      */
+    /* ========================================================= */
+    @media (max-width: 768px) {
+      /* 1. TOP HEADER COMPACT & CLEAN */
+      .top-header {
+        height: 58px !important;
+        padding: 0 12px !important;
+      }
+
+      .header-brand {
+        gap: 8px !important;
+      }
+
+      .brand-icon {
+        width: 32px !important;
+        height: 32px !important;
+        border-radius: 8px !important;
+      }
+
+      .brand-icon .material-icons-round {
+        font-size: 18px !important;
+      }
+
+      .brand-titles .brand-title-full {
+        display: none !important;
+      }
+
+      .brand-titles .brand-title-mobile {
+        display: block !important;
+        font-size: 15px !important;
+        font-weight: 800 !important;
+        color: var(--text-dark) !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+      }
+
+      .brand-titles p {
+        display: none !important;
+      }
+
+      .header-actions {
+        gap: 6px !important;
+        flex-shrink: 0 !important;
+      }
+
+      .header-user-details {
+        display: none !important;
+      }
+
+      .btn-exit {
+        width: 32px !important;
+        height: 32px !important;
+        border-radius: 8px !important;
+      }
+
+      /* 2. SIDEBAR AS OFF-CANVAS SLIDE DRAWER */
+      .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        width: 275px !important;
+        max-width: 82vw !important;
+        background: #ffffff !important;
+        z-index: 1001 !important;
+        transform: translateX(-100%) !important;
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 16px 14px !important;
+        border-right: 1px solid var(--border-color) !important;
+      }
+
+      .sidebar.mobile-open {
+        transform: translateX(0) !important;
+      }
+
+      .sidebar-mobile-header {
+        display: flex !important;
+      }
+
+      .sidebar-toggle-btn {
+        display: none !important;
+      }
+
+      .sidebar .menu-item {
+        justify-content: flex-start !important;
+        padding: 12px 14px !important;
+      }
+
+      .sidebar .menu-item .material-icons-outlined,
+      .sidebar .menu-item .material-icons-round {
+        margin-right: 12px !important;
+      }
+
+      .sidebar.collapsed .menu-item span:not(.material-icons-outlined):not(.material-icons-round) {
+        display: inline-block !important;
+      }
+
+      /* 3. MAIN VIEWPORT - FULL WIDTH */
+      .main-viewport {
+        padding: 14px 12px 36px 12px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+
+      /* 4. DASHBOARD HEADER & FILTER */
+      .dash-header-row {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+        margin-bottom: 14px !important;
+      }
+
+      .dash-title {
+        font-size: 18px !important;
+        line-height: 1.3 !important;
+        padding-top: 0 !important;
+      }
+
+      .filter-card {
+        width: 100% !important;
+        padding: 12px !important;
+        border-radius: 14px !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+      }
+
+      .filter-label {
+        grid-column: span 2 !important;
+        margin-bottom: 2px !important;
+        font-size: 10px !important;
+      }
+
+      .filter-card .select-box {
+        margin-bottom: 0 !important;
+        padding: 7px 8px !important;
+        font-size: 12px !important;
+      }
+
+      /* 5. STATS GRID 2x2 COMPACT (SATU PANDANGAN) */
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+      }
+
+      .stat-card {
+        padding: 12px !important;
+        border-radius: 14px !important;
+        gap: 8px !important;
+      }
+
+      .stat-icon-box {
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 10px !important;
+        margin-right: 0 !important;
+      }
+
+      .stat-icon-box .material-icons-outlined {
+        font-size: 18px !important;
+      }
+
+      .stat-info .title {
+        font-size: 11px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+
+      .stat-info .value {
+        font-size: 20px !important;
+        margin-top: 1px !important;
+      }
+
+      /* 6. FORM CARDS & ADAPTIVE INPUTS */
+      .info-card-box {
+        padding: 16px 14px !important;
+        border-radius: 14px !important;
+        max-width: 100% !important;
+        margin-bottom: 16px !important;
+      }
+
+      .form-responsive-row-3 {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+        margin-bottom: 10px !important;
+      }
+
+      .form-responsive-row-2 {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+        margin-bottom: 10px !important;
+      }
+
+      .info-grid-2col {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+      }
+
+      .btn-responsive-full {
+        width: 100% !important;
+        justify-content: center !important;
+      }
+
+      /* 7. REKAP SECTION & METRIC GRIDS */
+      .rekap-section {
+        padding: 16px 14px !important;
+        border-radius: 14px !important;
+        margin-bottom: 16px !important;
+      }
+
+      .metric-grid-4col {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+      }
+
+      .metric-grid-5col {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+      }
+
+      .metric-tile {
+        padding: 10px 8px !important;
+      }
+
+      .metric-tile .val {
+        font-size: 20px !important;
+      }
+
+      .metric-tile .lbl {
+        font-size: 11px !important;
+      }
+
+      /* 8. CONTROLS & SEARCH ROWS */
+      .bantuan-controls-card {
+        padding: 12px !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+      }
+
+      .bantuan-controls-card > div {
+        width: 100% !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+      }
+
+      .bantuan-controls-card input, 
+      .bantuan-controls-card select {
+        width: 100% !important;
+      }
+
+      /* 9. SEMBUNYIKAN TABEL DI HP & TAMPILKAN KARTU MINIMALIS (SATU PANDANGAN, NO SCROLL) */
+      .desktop-table-view {
+        display: none !important;
+      }
+
+      .mobile-cards-view {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        width: 100% !important;
+      }
+
+      /* 10. SEARCH & TABLE HEADER CONTROLS ON MOBILE */
+      #search-user, #search-kader-table, #search-akun-warga, #search-akun-warga-dawis,
+      #k-filter-desa, #k-filter-dawis, #rekap-filter-dawis, #search-bantuan-input, #filter-bantuan-status,
+      #new-tag-input {
+        width: 100% !important;
+      }
+
+      .bantuan-controls-card > div,
+      #view-manajemen_kader > div > div > div {
+        width: 100% !important;
+      }
+
+      /* 11. MODAL ADAPTATION */
+      .modal-card {
+        padding: 20px 16px !important;
+        border-radius: 18px !important;
+        width: 95% !important;
+        max-height: 90vh !important;
+      }
+
+      /* 12. LOGIN SCREEN ON MOBILE */
+      #login-screen {
+        padding: 16px 12px !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+      }
+
+      .login-card {
+        padding: 24px 14px !important;
+        border-radius: 20px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      .login-title {
+        font-size: 17px !important;
+      }
+
+      .login-subtitle {
+        font-size: 12px !important;
+        margin-bottom: 20px !important;
+      }
+
+      .role-card {
+        padding: 12px !important;
+        width: 100% !important;
+      }
+
+      .role-icon-box {
+        width: 40px !important;
+        height: 40px !important;
+        margin-right: 12px !important;
+      }
+
+      .role-info h4 {
+        font-size: 14px !important;
+      }
+
+      .role-info p {
+        font-size: 11px !important;
+      }
+
+      /* 13. SECTION TITLE & DASH TITLE MOBILE */
+      .section-title {
+        font-size: 14px !important;
+        margin-bottom: 14px !important;
+      }
+
+      .page-subtitle {
+        font-size: 12px !important;
+        margin-bottom: 16px !important;
+      }
+
+      /* 14. BUTTON ADJUSTMENTS */
+      .btn-add {
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 10px 16px !important;
+        font-size: 13px !important;
+        border-radius: 10px !important;
+      }
+
+      .search-input {
+        font-size: 13px !important;
+        padding: 10px 12px !important;
+      }
+
+      /* 15. FAMILY NAME & ADDRESS */
+      .family-name {
+        font-size: 16px !important;
+      }
+
+      .family-address {
+        font-size: 12px !important;
+      }
+    }
+
+    /* ========================================================= */
+    /* SMALL PHONES (320px - 360px, e.g. iPhone SE, Galaxy S Mini) */
+    /* ========================================================= */
+    @media (max-width: 360px) {
+      .top-header {
+        height: 52px !important;
+        padding: 0 8px !important;
+      }
+
+      .btn-hamburger {
+        width: 30px !important;
+        height: 30px !important;
+      }
+
+      .brand-icon {
+        width: 28px !important;
+        height: 28px !important;
+      }
+
+      .brand-titles .brand-title-mobile {
+        font-size: 13px !important;
+      }
+
+      .main-viewport {
+        padding: 10px 8px 28px 8px !important;
+      }
+
+      .dash-title {
+        font-size: 16px !important;
+      }
+
+      .stats-grid {
+        gap: 8px !important;
+      }
+
+      .stat-card {
+        padding: 10px !important;
+        border-radius: 12px !important;
+      }
+
+      .stat-icon-box {
+        width: 32px !important;
+        height: 32px !important;
+      }
+
+      .stat-info .value {
+        font-size: 18px !important;
+      }
+
+      .stat-info .title {
+        font-size: 10px !important;
+      }
+
+      .m-card {
+        padding: 10px !important;
+        border-radius: 12px !important;
+        gap: 6px !important;
+      }
+
+      .m-card-title {
+        font-size: 13px !important;
+      }
+
+      .m-card-sub {
+        font-size: 10px !important;
+      }
+
+      .m-card-body {
+        padding: 6px 8px !important;
+        gap: 4px 8px !important;
+      }
+
+      .m-card-label {
+        font-size: 9px !important;
+      }
+
+      .m-card-value {
+        font-size: 11px !important;
+      }
+
+      .m-card-actions .btn-action-blue,
+      .m-card-actions .btn-action-green,
+      .m-card-actions .btn-action-yellow,
+      .m-card-actions .btn-action-red,
+      .m-card-actions .btn-add {
+        padding: 5px 8px !important;
+        font-size: 10px !important;
+        min-width: 55px !important;
+      }
+
+      .section-title {
+        font-size: 13px !important;
+      }
+
+      .metric-tile .val {
+        font-size: 18px !important;
+      }
+
+      .metric-tile .lbl {
+        font-size: 10px !important;
+      }
+
+      .rekap-section {
+        padding: 12px 10px !important;
+      }
+
+      .login-card {
+        padding: 20px 12px !important;
+      }
+
+      .login-title {
+        font-size: 15px !important;
+      }
+
+      .login-subtitle {
+        font-size: 11px !important;
+      }
+
+      .role-card {
+        padding: 10px !important;
+      }
+
+      .role-icon-box {
+        width: 36px !important;
+        height: 36px !important;
+        margin-right: 10px !important;
+      }
+
+      .role-info h4 {
+        font-size: 13px !important;
+      }
+
+      .role-info p {
+        font-size: 10px !important;
+      }
+
+      .modal-card {
+        padding: 16px 12px !important;
+        width: 98% !important;
+      }
+
+      .modal-card h3 {
+        font-size: 16px !important;
+      }
+
+      .form-group label {
+        font-size: 11px !important;
+      }
+
+      .form-group input, .form-group select {
+        padding: 8px 10px !important;
+        font-size: 12px !important;
+      }
+
+      .btn-submit, .btn-cancel {
+        padding: 8px 14px !important;
+        font-size: 13px !important;
+      }
+
+      .sidebar {
+        width: 250px !important;
+        max-width: 85vw !important;
+        padding: 12px 10px !important;
+      }
+
+      .sidebar .menu-item {
+        padding: 10px 12px !important;
+        font-size: 13px !important;
+      }
+
+      .badge-menunggu, .badge-disetujui, .badge-ditolak {
+        font-size: 10px !important;
+        padding: 3px 8px !important;
+      }
+    }
+
+    /* ========================================================= */
+    /* MEDIUM PHONES (361px - 480px, standard phones)             */
+    /* ========================================================= */
+    @media (min-width: 361px) and (max-width: 480px) {
+      .main-viewport {
+        padding: 12px 10px 32px 10px !important;
+      }
+
+      .m-card {
+        padding: 11px 12px !important;
+      }
+
+      .stat-card {
+        padding: 12px !important;
+      }
+
+      .stat-info .value {
+        font-size: 20px !important;
+      }
+    }
+
+    /* ========================================================= */
+    /* LANDSCAPE PHONES & SMALL TABLETS (481px - 768px)           */
+    /* ========================================================= */
+    @media (min-width: 481px) and (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+
+      .m-card-body {
+        grid-template-columns: 1fr 1fr 1fr !important;
+      }
+
+      .m-card-actions .btn-action-blue,
+      .m-card-actions .btn-action-green,
+      .m-card-actions .btn-action-yellow,
+      .m-card-actions .btn-action-red,
+      .m-card-actions .btn-add {
+        flex: 0 1 auto !important;
+        min-width: 80px !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -830,11 +1634,16 @@
     <!-- TOP HEADER -->
     <header class="top-header">
       <div class="header-brand">
+        <!-- TOMBOL HAMBURGER (GARIS 3) -->
+        <button class="btn-hamburger" id="btn-hamburger" onclick="handleHamburgerClick()" title="Buka/Tutup Menu" aria-label="Menu">
+          <span class="material-icons-round">menu</span>
+        </button>
         <div class="brand-icon">
           <span class="material-icons-round" style="font-size:22px;">home</span>
         </div>
         <div class="brand-titles">
-          <h1>Sistem Informasi Dasa Wisma Desa Japan</h1>
+          <h1 class="brand-title-full">Sistem Informasi Dasa Wisma Desa Japan</h1>
+          <h1 class="brand-title-mobile">Dawis Japan</h1>
           <p><span class="material-icons-outlined" style="font-size:12px;">location_on</span> Desa: Japan</p>
         </div>
       </div>
@@ -849,13 +1658,28 @@
       </div>
     </header>
 
+    <!-- SIDEBAR OVERLAY (BACKDROP KLIK TUTUP DI HP) -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebarMobile()"></div>
+
     <!-- APP BODY -->
     <div class="app-body">
       <!-- SIDEBAR -->
       <aside class="sidebar" id="sidebar">
-        <button class="sidebar-toggle-btn" onclick="toggleSidebar()">
-          <span class="material-icons-round" id="toggle-icon">chevron_left</span>
-        </button>
+        <!-- HEADER KHUSUS DRAWER HP -->
+        <div class="sidebar-mobile-header">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div class="brand-icon" style="width:32px; height:32px; border-radius:8px;">
+              <span class="material-icons-round" style="font-size:18px;">home</span>
+            </div>
+            <div>
+              <div style="font-size:14px; font-weight:800; color:var(--text-dark); line-height:1.2;">Dawis Japan</div>
+              <div style="font-size:10px; color:var(--primary-blue); font-weight:600;">Menu Navigasi</div>
+            </div>
+          </div>
+          <button class="btn-exit" onclick="closeSidebarMobile()" style="width:32px; height:32px; border-radius:8px;" title="Tutup Menu">
+            <span class="material-icons-round" style="font-size:18px;">close</span>
+          </button>
+        </div>
 
         <ul class="sidebar-menu" id="sidebar-menu">
           <!-- Dynamic sidebar items injected by JS -->
@@ -867,7 +1691,7 @@
         <!-- VIEW A: DASHBOARD UTAMA (Warga, Kader, Kades) -->
         <div class="page-view active" id="view-dashboard">
           <div class="dash-header-row">
-            <h2 class="dash-title">Dashboard Utama - Desa Japan</h2>
+            <h2 class="dash-title">Dashboard Utama</h2>
             
             <div class="filter-card">
               <span class="filter-label">FILTER WILAYAH</span>
@@ -929,8 +1753,8 @@
 
         <!-- VIEW B: DATA PRIBADI WARGA (READ-ONLY) -->
         <div class="page-view" id="view-data_pribadi">
-          <h2 class="dash-title">Data Pribadi Warga Desa Japan</h2>
-          <p class="page-subtitle">Data pribadi & status penerima bantuan hibah keluarga Anda (Akses Lihat Data).</p>
+          <h2 class="dash-title">Data Pribadi Keluarga</h2>
+          <p class="page-subtitle">Informasi kependudukan dan status penerima bantuan hibah keluarga Anda.</p>
 
           <div class="info-card-box">
             <div class="family-name" id="warga-nama">Budi Santoso</div>
@@ -961,7 +1785,7 @@
               <h3 style="font-size:16px; font-weight:800;">Daftar Anggota Keluarga (Read-Only)</h3>
             </div>
             
-            <div class="data-table-container">
+            <div class="data-table-container desktop-table-view">
               <table class="custom-table">
                 <thead>
                   <tr>
@@ -977,17 +1801,19 @@
                 </tbody>
               </table>
             </div>
+            <!-- TAMPILAN KARTU ANGGOTA WARGA DI HP (TANPA GESER) -->
+            <div class="mobile-cards-view" id="warga-anggota-cards-mobile"></div>
           </div>
         </div>
 
         <!-- VIEW C: REKAP DATA (SUPPORTED BY BOTH ID view-rekap_data and view-rekap-data) -->
         <div class="page-view" id="view-rekap_data">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
             <div>
-              <h2 class="dash-title" style="margin-bottom:4px;">Rekap Data - Desa Japan</h2>
-              <p style="font-size:13px; color:var(--text-medium);">Ringkasan dan Rekapitulasi Data Kependudukan Dasa Wisma</p>
+              <h2 class="dash-title" style="margin-bottom:4px;">Rekap Data Dawis</h2>
+              <p style="font-size:13px; color:var(--text-medium);">Ringkasan dan rekapitulasi data kependudukan Dasa Wisma.</p>
             </div>
-            <div style="display:flex; align-items:center; gap:8px;">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
               <label style="font-size:13px; font-weight:700;">Filter Dawis:</label>
               <select class="select-box" id="rekap-filter-dawis" onchange="renderRekapData()" style="width:180px; margin-bottom:0;">
                 <option value="Semua Dawis">Semua Dawis</option>
@@ -1036,7 +1862,7 @@
           <!-- Section 3: Fasilitas & Kriteria Rumah -->
           <div class="rekap-section">
             <h3 class="section-title">Fasilitas & Status Rumah Layak Huni (RLH)</h3>
-            <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:12px;">
+            <div class="metric-grid-5col">
               <div class="metric-tile" style="background:var(--soft-green-bg); color:var(--soft-green-text);"><div class="val" id="rk-sehat">0</div><div class="lbl">Rumah Layak Huni</div></div>
               <div class="metric-tile" style="background:#fee2e2; color:#991b1b;"><div class="val" id="rk-tidak-layak">0</div><div class="lbl">Tidak Layak Huni</div></div>
               <div class="metric-tile" style="background:var(--soft-blue-bg); color:var(--soft-blue-text);"><div class="val" id="rk-sampah">0</div><div class="lbl">Tempat Sampah</div></div>
@@ -1051,7 +1877,7 @@
               <h3 class="section-title" style="margin-bottom:0;">Tabel Rekapitulasi Data Kartu Keluarga (KK)</h3>
               <span style="font-size:13px; font-weight:700; color:var(--primary-blue);" id="rekap-table-count">Total: 0 KK</span>
             </div>
-            <div class="data-table-container">
+            <div class="data-table-container desktop-table-view">
               <table class="custom-table">
                 <thead>
                   <tr>
@@ -1082,14 +1908,16 @@
                 </tbody>
               </table>
             </div>
+            <!-- TAMPILAN KARTU REKAP KELUARGA DI HP (TANPA GESER) -->
+            <div class="mobile-cards-view" id="rekap-cards-mobile"></div>
           </div>
         </div>
 
         <!-- VIEW D: MANAJEMEN KADER (AKSES PENUH PENGELOLAAN DATA) -->
         <div class="page-view" id="view-manajemen_kader">
-          <div style="display:flex; justify-content:space-between; gap:20px; margin-bottom:24px; align-items:flex-start; flex-wrap:wrap;">
+          <div style="display:flex; justify-content:space-between; gap:20px; margin-bottom:20px; align-items:flex-start; flex-wrap:wrap;">
             <div style="flex:1;">
-              <h2 class="dash-title">Manajemen Data Keluarga - Desa Japan</h2>
+              <h2 class="dash-title">Manajemen Data KK & Warga</h2>
               <div style="display:flex; gap:12px; margin-top:16px; flex-wrap:wrap; align-items:center;">
                 <!-- FITUR PENCARIAN KEPALA KELUARGA / ANGGOTA -->
                 <input type="text" id="search-kader-table" class="search-input" style="width:240px; margin-bottom:0;" placeholder="Cari kepala/anggota keluarga..." oninput="renderKaderTable()">
@@ -1115,7 +1943,7 @@
 
 
           <!-- COMPREHENSIVE DATA TABLE SPECIFIED BY USER & SCREENSHOT 1 -->
-          <div class="data-table-container">
+          <div class="data-table-container desktop-table-view">
             <table class="custom-table">
               <thead>
                 <tr>
@@ -1150,13 +1978,15 @@
               </tbody>
             </table>
           </div>
+          <!-- TAMPILAN KARTU DATA KELUARGA DI HP (SATU PANDANGAN, TANPA GESER) -->
+          <div class="mobile-cards-view" id="kader-cards-mobile"></div>
         </div>
 
         <!-- VIEW F: BUAT AKUN WARGA (KADER) -->
         <div class="page-view" id="view-buat_akun_warga">
           <div style="margin-bottom:6px;">
-            <h2 class="dash-title">Buat Akun & Manajemen KK Warga - Desa Japan</h2>
-            <p style="font-size:13px; color:var(--text-medium); margin-top:6px;">Langkah 1: Tambah Kartu Keluarga (KK) & Akun Warga &rarr; Langkah 2: Input Anggota Keluarga &rarr; Langkah 3: Tentukan Kepala Keluarga.</p>
+            <h2 class="dash-title">Buat Akun Warga & KK</h2>
+            <p style="font-size:13px; color:var(--text-medium); margin-top:4px;">Tambah KK baru & buatkan akun login warga.</p>
           </div>
 
           <!-- Form Card: Tambah KK & Akun Warga Baru -->
@@ -1166,55 +1996,55 @@
               <strong style="font-size:15px; color:var(--primary-blue-dark);">Form Tambah KK & Akun Login Warga Baru</strong>
             </div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:14px;">
+            <div class="form-responsive-row-3">
               <div>
-                <label style="font-size:12px; font-weight:700; color:var(--text-medium); display:block; margin-bottom:4px;">NAMA KK / KELUARGA *</label>
-                <input type="text" id="akun-nama-kk" class="search-input" style="width:100%; margin-bottom:0;" placeholder="Contoh: Keluarga Budi Santoso">
+                <label style="font-size:12px; font-weight:600; color:var(--text-medium); display:block; margin-bottom:4px;">Nama KK / Keluarga *</label>
+                <input type="text" id="akun-nama-kk" class="search-input" style="width:100%; margin-bottom:0;" placeholder="Contoh: Budi Santoso">
               </div>
               <div>
-                <label style="font-size:12px; font-weight:700; color:var(--text-medium); display:block; margin-bottom:4px;">DAWIS DAERAH *</label>
+                <label style="font-size:12px; font-weight:600; color:var(--text-medium); display:block; margin-bottom:4px;">Dawis Daerah *</label>
                 <select id="akun-dawis" class="select-box" style="width:100%; margin-bottom:0;" onchange="onAkunDawisChange()">
                   <option value="dahlia 9">dahlia 9</option>
                   <option value="dahlia 1">dahlia 1</option>
                   <option value="mawar 2">mawar 2</option>
-                  <option value="__NEW__">+ Ketik / Tambah Dawis Baru...</option>
+                  <option value="__NEW__">+ Tambah Dawis Baru...</option>
                 </select>
-                <input type="text" id="akun-dawis-custom" class="search-input" style="width:100%; margin-top:6px; display:none;" placeholder="Ketik nama Dawis baru (misal: Dahlia 3)..." oninput="onCustomDawisInput()">
+                <input type="text" id="akun-dawis-custom" class="search-input" style="width:100%; margin-top:6px; display:none;" placeholder="Ketik nama Dawis baru..." oninput="onCustomDawisInput()">
               </div>
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                 <div>
-                  <label style="font-size:12px; font-weight:700; color:var(--text-medium); display:block; margin-bottom:4px;">RT</label>
+                  <label style="font-size:12px; font-weight:600; color:var(--text-medium); display:block; margin-bottom:4px;">RT *</label>
                   <input type="text" id="akun-rt" class="search-input" style="width:100%; margin-bottom:0;" value="3">
                 </div>
                 <div>
-                  <label style="font-size:12px; font-weight:700; color:var(--text-medium); display:block; margin-bottom:4px;">RW</label>
+                  <label style="font-size:12px; font-weight:600; color:var(--text-medium); display:block; margin-bottom:4px;">RW *</label>
                   <input type="text" id="akun-rw" class="search-input" style="width:100%; margin-bottom:0;" value="4">
                 </div>
               </div>
             </div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+            <div class="form-responsive-row-3">
               <div>
-                <label style="font-size:12px; font-weight:700; color:var(--text-medium); display:block; margin-bottom:4px;">EMAIL LOGIN WARGA *</label>
+                <label style="font-size:12px; font-weight:600; color:var(--text-medium); display:block; margin-bottom:4px;">Email Login Warga *</label>
                 <input type="email" id="akun-email" class="search-input" style="width:100%; margin-bottom:0;" placeholder="contoh: budi@japan.desa.id">
               </div>
               <div>
-                <label style="font-size:12px; font-weight:700; color:var(--text-medium); display:block; margin-bottom:4px;">KATA SANDI / PASSWORD *</label>
+                <label style="font-size:12px; font-weight:600; color:var(--text-medium); display:block; margin-bottom:4px;">Kata Sandi *</label>
                 <div style="position:relative; display:flex; align-items:center;">
-                  <input type="password" id="akun-password" class="search-input" style="width:100%; margin-bottom:0; padding-right:36px; letter-spacing:2px;" placeholder="Buatkan password untuk warga" oninput="onPasswordInput(this)">
+                  <input type="password" id="akun-password" class="search-input" style="width:100%; margin-bottom:0; padding-right:36px; letter-spacing:1px;" placeholder="Password login warga" oninput="onPasswordInput(this)">
                   <button type="button" id="akun-password-toggle" onclick="togglePasswordVisibility('akun-password','akun-password-toggle')" tabindex="-1" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; padding:2px; color:var(--text-medium); line-height:1;" title="Tampilkan/Sembunyikan">
                     <span class="material-icons-outlined" style="font-size:17px; vertical-align:middle;">visibility_off</span>
                   </button>
                 </div>
               </div>
               <div>
-                <label style="font-size:12px; font-weight:700; color:var(--text-medium); display:block; margin-bottom:4px;">NIK AWAL (Opsional)</label>
-                <input type="text" id="akun-nik" class="search-input" style="width:100%; margin-bottom:0;" placeholder="Masukkan 16 digit NIK">
+                <label style="font-size:12px; font-weight:600; color:var(--text-medium); display:block; margin-bottom:4px;">NIK Awal (Opsional)</label>
+                <input type="text" id="akun-nik" class="search-input" style="width:100%; margin-bottom:0;" placeholder="16 digit NIK kepala keluarga">
               </div>
             </div>
 
             <div style="display:flex; justify-content:flex-end; margin-top:18px;">
-              <button class="btn-add" style="background:var(--soft-green-text); padding:10px 24px; font-size:13px;" onclick="simpanKkDanAkunWarga()">
+              <button class="btn-add btn-responsive-full" style="background:var(--soft-green-text); padding:10px 24px; font-size:13px;" onclick="simpanKkDanAkunWarga()">
                 <span class="material-icons-outlined" style="font-size:16px; vertical-align:middle; margin-right:4px;">add_circle</span> TAMBAH KK & BUAT AKUN WARGA
               </button>
             </div>
@@ -1223,7 +2053,7 @@
           <!-- Tabel KK & Akun Warga Terdaftar -->
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
             <strong style="font-size:15px;">Daftar KK & Akun Warga Terdaftar</strong>
-            <div style="display:flex; gap:10px; align-items:center;">
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
               <select id="search-akun-warga-dawis" class="select-box" style="width:180px; margin-bottom:0;" onchange="renderAkunWargaTable()">
                 <option value="Semua Dawis">Sortir: Semua Dawis</option>
               </select>
@@ -1232,7 +2062,7 @@
           </div>
 
 
-          <div class="data-table-container">
+          <div class="data-table-container desktop-table-view">
             <table class="custom-table">
               <thead>
                 <tr>
@@ -1249,21 +2079,23 @@
               </tbody>
             </table>
           </div>
+          <!-- TAMPILAN KARTU KK & AKUN WARGA DI HP (SATU PANDANGAN, TANPA GESER) -->
+          <div class="mobile-cards-view" id="akun-warga-cards-mobile"></div>
         </div>
 
         <!-- VIEW G: MANAJEMEN USER (KADER & KADES) -->
         <div class="page-view" id="view-manajemen_user">
-          <h2 class="dash-title" style="margin-bottom:6px;">Manajemen Akun & Pengguna</h2>
-          <p style="font-size:13px; color:var(--text-medium); margin-bottom:20px;">Kelola semua akun pengguna sistem (Warga, Kader, Kepala Desa).</p>
+          <h2 class="dash-title" style="margin-bottom:4px;">Manajemen User & Akun</h2>
+          <p style="font-size:13px; color:var(--text-medium); margin-bottom:16px;">Kelola akun semua pengguna (Warga, Kader, Kepala Desa).</p>
 
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-            <button class="btn-add" style="background:var(--primary-blue); padding:10px 20px; font-size:13px;" onclick="openAddUserModal()">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+            <button class="btn-add btn-responsive-full" style="background:var(--primary-blue); padding:10px 20px; font-size:13px;" onclick="openAddUserModal()">
               <span class="material-icons-outlined" style="font-size:16px; vertical-align:middle; margin-right:4px;">person_add</span> Tambah User
             </button>
             <input type="text" id="search-user" class="search-input" style="width:260px; margin-bottom:0;" placeholder="Cari user..." oninput="renderUserTable()">
           </div>
 
-          <div class="data-table-container">
+          <div class="data-table-container desktop-table-view">
             <table class="custom-table">
               <thead>
                 <tr>
@@ -1280,37 +2112,100 @@
               </tbody>
             </table>
           </div>
+          <!-- TAMPILAN KARTU USER DI HP (SATU PANDANGAN, TANPA GESER) -->
+          <div class="mobile-cards-view" id="user-cards-mobile"></div>
         </div>
 
         <!-- VIEW E: MANAJEMEN BANTUAN HIBAH (KEPALA DESA - 100% MATCHING SCREENSHOT 3) -->
         <div class="page-view" id="view-manajemen_bantuan">
-          <h2 class="dash-title" style="margin-bottom:20px;">Manajemen Bantuan Hibah - Desa Japan</h2>
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; flex-wrap:wrap; gap:12px;">
+            <div>
+              <h2 class="dash-title" style="margin-bottom:4px;">Manajemen Bantuan Hibah</h2>
+              <p style="font-size:13px; color:var(--text-medium); margin:0;">
+                Kelola usulan bantuan hibah warga (setujui, tolak, atau hapus).
+              </p>
+            </div>
+            <button class="btn-add" style="background:var(--soft-green-text);" onclick="openAddBantuanModal()">
+              <span class="material-icons-outlined" style="font-size:18px;">add_circle_outline</span> + Tambah Bantuan
+            </button>
+          </div>
 
-          <!-- Action Bar: Add Bantuan + Tag Input -->
-          <div style="display:flex; align-items:center; gap:16px; margin-bottom:16px; flex-wrap:wrap;">
-            <button class="btn-add" style="background:var(--soft-green-text);" onclick="openAddBantuanModal()">+ Tambah Bantuan</button>
+          <!-- Quick Stats Cards Usulan Bantuan -->
+          <div class="stats-grid" style="margin-bottom:20px;">
+            <div class="stat-card">
+              <div class="stat-icon-box" style="background:var(--soft-blue-bg);">
+                <span class="material-icons-outlined" style="color:var(--soft-blue-text);">card_giftcard</span>
+              </div>
+              <div class="stat-info">
+                <div class="title">Total Usulan</div>
+                <div class="value" id="stat-bantuan-total">0</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-box" style="background:#fef3c7;">
+                <span class="material-icons-outlined" style="color:#d97706;">hourglass_top</span>
+              </div>
+              <div class="stat-info">
+                <div class="title">Menunggu Persetujuan</div>
+                <div class="value" id="stat-bantuan-pending" style="color:#d97706;">0</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-box" style="background:var(--soft-green-bg);">
+                <span class="material-icons-outlined" style="color:var(--soft-green-text);">check_circle_outline</span>
+              </div>
+              <div class="stat-info">
+                <div class="title">Disetujui Kades</div>
+                <div class="value" id="stat-bantuan-approved" style="color:var(--soft-green-text);">0</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-box" style="background:#fee2e2;">
+                <span class="material-icons-outlined" style="color:#dc2626;">highlight_off</span>
+              </div>
+              <div class="stat-info">
+                <div class="title">Ditolak</div>
+                <div class="value" id="stat-bantuan-rejected" style="color:#dc2626;">0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls: Search & Filter + Master Tag -->
+          <div class="bantuan-controls-card" style="background:#ffffff; border:1px solid var(--border-color); border-radius:14px; padding:16px; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+              <input type="text" id="search-bantuan-input" class="search-input" style="width:240px; margin-bottom:0; padding:8px 12px;" placeholder="Cari Kepala Keluarga..." oninput="renderManajemenBantuan()">
+              
+              <select id="filter-bantuan-status" class="select-box" style="width:200px; padding:8px 12px;" onchange="renderManajemenBantuan()">
+                <option value="ALL">Semua Status Usulan</option>
+                <option value="Menunggu Persetujuan">⏳ Menunggu Persetujuan</option>
+                <option value="Disetujui"> Disetujui</option>
+                <option value="Ditolak">❌ Ditolak</option>
+              </select>
+            </div>
 
             <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-size:13px; font-weight:700;">Nama Bantuan Tersedia:</span>
-              <input type="text" id="new-tag-input" class="search-input" style="width:220px; margin-bottom:0; padding:8px 12px;" placeholder="Tambah nama bantuan baru...">
-              <button class="btn-submit" style="padding:8px 16px;" onclick="addBantuanTag()">Tambah</button>
+              <span style="font-size:13px; font-weight:700; color:var(--text-dark);">Nama Bantuan:</span>
+              <input type="text" id="new-tag-input" class="search-input" style="width:180px; margin-bottom:0; padding:8px 12px;" placeholder="Tambah jenis...">
+              <button class="btn-submit" style="padding:8px 14px; font-size:12px;" onclick="addBantuanTag()">+ Tag</button>
             </div>
           </div>
 
           <!-- Tag Pills Row -->
-          <div id="bantuan-tags-row" style="margin-bottom:20px;">
+          <div id="bantuan-tags-row" style="margin-bottom:18px;">
             <!-- Dynamic tags -->
           </div>
 
-          <!-- Table Bantuan Data (Matching Screenshot 3) -->
-          <div class="data-table-container" style="max-width:840px;">
+          <!-- Table Bantuan Data -->
+          <div class="data-table-container desktop-table-view">
             <table class="custom-table">
               <thead>
                 <tr>
-                  <th style="width:60px;">No</th>
+                  <th style="width:50px;">No</th>
                   <th>Kepala Keluarga</th>
                   <th>Nama Bantuan</th>
-                  <th style="width:100px;">Aksi</th>
+                  <th>Diajukan Oleh</th>
+                  <th style="width:160px;">Status Usulan</th>
+                  <th style="width:220px; text-align:center;">Aksi (Kades)</th>
                 </tr>
               </thead>
               <tbody id="bantuan-table-body">
@@ -1318,6 +2213,8 @@
               </tbody>
             </table>
           </div>
+          <!-- TAMPILAN KARTU BANTUAN DI HP (SATU PANDANGAN, TANPA GESER) -->
+          <div class="mobile-cards-view" id="bantuan-cards-mobile"></div>
         </div>
       </main>
     </div>
@@ -1639,6 +2536,44 @@
     </div>
   </div>
 
+  <!-- MODAL TAMBAH BANTUAN KADES -->
+  <div class="modal-overlay" id="modal-add-bantuan">
+    <div class="modal-card" style="max-width:480px;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <span class="material-icons-outlined" style="color:var(--soft-green-text); font-size:26px;">card_giftcard</span>
+        <h3 style="margin:0;">Tambah Bantuan Hibah</h3>
+      </div>
+      <p style="font-size:13px; color:var(--text-medium); margin-bottom:16px;">Tambahkan data penerima bantuan hibah secara langsung oleh Kepala Desa.</p>
+
+      <div class="form-group">
+        <label>Pilih Kepala Keluarga</label>
+        <select id="modal-bantuan-kk" class="select-box" style="width:100%;">
+          <!-- Dynamic options from keluargaData -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Jenis / Nama Bantuan</label>
+        <select id="modal-bantuan-jenis" class="select-box" style="width:100%;">
+          <!-- Dynamic options from bantuanTags -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Status Persetujuan</label>
+        <select id="modal-bantuan-status" class="select-box" style="width:100%;">
+          <option value="Disetujui" selected>Langsung Disetujui (Kades)</option>
+          <option value="Menunggu Persetujuan">Menunggu Persetujuan</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeAddBantuanModal()">Batal</button>
+        <button class="btn-submit" style="background:var(--soft-green-text);" onclick="submitDirectBantuan()">Simpan Bantuan</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     let currentRole = 'warga';
     let currentMenu = 'dashboard';
@@ -1733,12 +2668,11 @@
 
     let bantuanTags = ['PKH', 'BPNT', 'BLT'];
     let bantuanRecords = [
-      { id: '1', nama: 'Budi Santoso', jenis: 'PKH' },
-      { id: '2', nama: 'arjun naja', jenis: 'PKH' },
-      { id: '3', nama: 'Budi Santoso r', jenis: 'PJK' },
-      { id: '4', nama: 'arjun', jenis: 'PKH' },
-      { id: '5', nama: 'arjun naja', jenis: 'PJK' },
-      { id: '6', nama: 'Budi Santoso', jenis: 'PJK' }
+      { id: '1', kkId: '1', nama: 'Budi Santoso', rt: '1', rw: '4', dawis: 'Dahlia 1', jenis: 'PKH', status: 'Disetujui', diajukanOleh: 'Kader Siti Aminah', tanggal: '01/09/2026' },
+      { id: '2', kkId: '2', nama: 'Slamet Riyadi', rt: '2', rw: '4', dawis: 'Dahlia 2', jenis: 'BLT', status: 'Menunggu Persetujuan', diajukanOleh: 'Kader Siti Aminah', tanggal: '05/09/2026' },
+      { id: '3', kkId: '3', nama: 'Arjun Naja', rt: '3', rw: '4', dawis: 'Dahlia 9', jenis: 'BPNT', status: 'Menunggu Persetujuan', diajukanOleh: 'Kader Siti Aminah', tanggal: '06/09/2026' },
+      { id: '4', kkId: '1', nama: 'Budi Santoso', rt: '1', rw: '4', dawis: 'Dahlia 1', jenis: 'PJK', status: 'Disetujui', diajukanOleh: 'Kepala Desa', tanggal: '02/09/2026' },
+      { id: '5', kkId: '4', nama: 'Mbah Joyo', rt: '2', rw: '4', dawis: 'Dahlia 2', jenis: 'PKH Lansia', status: 'Ditolak', diajukanOleh: 'Kader Siti Aminah', tanggal: '03/09/2026' }
     ];
 
     let masterDawisList = [
@@ -1795,7 +2729,14 @@
           if (parsed.keluargaData && Array.isArray(parsed.keluargaData) && parsed.keluargaData.length > 0) keluargaData = parsed.keluargaData;
           if (parsed.akunWargaList && Array.isArray(parsed.akunWargaList)) akunWargaList = parsed.akunWargaList;
           if (parsed.allUsers && Array.isArray(parsed.allUsers)) allUsers = parsed.allUsers;
-          if (parsed.bantuanRecords && Array.isArray(parsed.bantuanRecords)) bantuanRecords = parsed.bantuanRecords;
+          if (parsed.bantuanRecords && Array.isArray(parsed.bantuanRecords)) {
+            bantuanRecords = parsed.bantuanRecords.map(b => ({
+              ...b,
+              status: b.status || 'Menunggu Persetujuan',
+              diajukanOleh: b.diajukanOleh || 'Kader Siti Aminah',
+              tanggal: b.tanggal || '06/09/2026'
+            }));
+          }
           if (parsed.bantuanTags && Array.isArray(parsed.bantuanTags)) bantuanTags = parsed.bantuanTags;
           if (parsed.masterDawisList && Array.isArray(parsed.masterDawisList)) masterDawisList = parsed.masterDawisList;
         } else {
@@ -2404,21 +3345,27 @@
       const headerInfo = document.getElementById('header-user-info');
       headerInfo.innerHTML = `
         <div style="display:flex; align-items:center; gap:8px;">
-          <div style="width:34px; height:34px; border-radius:50%; background:${roleBgs[role]}; display:flex; align-items:center; justify-content:center;">
+          <div style="width:34px; height:34px; border-radius:50%; background:${roleBgs[role]}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
             <span class="material-icons-outlined" style="font-size:18px; color:${roleColors[role]};">${icons[role]}</span>
           </div>
-          <div style="line-height:1.3;">
-            <div style="font-size:13px; font-weight:700; color:var(--text-dark);">${displayName}</div>
-            <div style="font-size:11px; font-weight:600; background:${roleBgs[role]}; color:${roleColors[role]}; padding:1px 8px; border-radius:6px; display:inline-block;">${roleLabels[role]} &bull; ${displaySub}</div>
+          <div class="header-user-details" style="line-height:1.3;">
+            <div class="header-user-name" style="font-size:13px; font-weight:700; color:var(--text-dark);">${displayName}</div>
+            <div class="header-user-badge" style="font-size:11px; font-weight:600; background:${roleBgs[role]}; color:${roleColors[role]}; padding:1px 8px; border-radius:6px; display:inline-block;">
+              <span>${roleLabels[role]}</span><span class="email-text"> &bull; ${displaySub}</span>
+            </div>
           </div>
         </div>
       `;
 
+      if (window.innerWidth <= 768) {
+        closeSidebarMobile();
+      }
       switchMenu('dashboard');
       renderSidebar();
     }
 
     function logout() {
+      closeSidebarMobile();
       document.getElementById('dashboard-layout').style.display = 'none';
       document.getElementById('login-screen').style.display = 'flex';
       loggedInUser = null;
@@ -2427,17 +3374,50 @@
       if (headerInfo) headerInfo.innerHTML = '';
     }
 
+    function handleHamburgerClick() {
+      if (window.innerWidth <= 768) {
+        toggleSidebarMobile();
+      } else {
+        toggleSidebar();
+      }
+    }
+
+    function toggleSidebarMobile() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (!sidebar) return;
+      const isOpen = sidebar.classList.contains('mobile-open');
+      if (isOpen) {
+        closeSidebarMobile();
+      } else {
+        sidebar.classList.add('mobile-open');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeSidebarMobile() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (sidebar) sidebar.classList.remove('mobile-open');
+      if (overlay) overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        closeSidebarMobile();
+      }
+    });
+
     function toggleSidebar() {
       isSidebarCollapsed = !isSidebarCollapsed;
       const sidebar = document.getElementById('sidebar');
-      const icon = document.getElementById('toggle-icon');
-      
+      if (!sidebar) return;
       if (isSidebarCollapsed) {
         sidebar.classList.add('collapsed');
-        icon.textContent = 'chevron_right';
       } else {
         sidebar.classList.remove('collapsed');
-        icon.textContent = 'chevron_left';
       }
       renderSidebar();
     }
@@ -2477,7 +3457,7 @@
         
         li.innerHTML = `
           <span class="material-icons-outlined">${item.icon}</span>
-          ${!isSidebarCollapsed ? `<span>${item.label}</span>` : ''}
+          <span>${item.label}</span>
         `;
         menuList.appendChild(li);
       });
@@ -2486,6 +3466,11 @@
     function switchMenu(menuKey) {
       currentMenu = menuKey;
       renderSidebar();
+
+      // Tutup drawer di HP saat menu diklik
+      if (window.innerWidth <= 768) {
+        closeSidebarMobile();
+      }
 
       // Hide all page views
       document.querySelectorAll('.page-view').forEach(el => {
@@ -2567,21 +3552,33 @@
         document.getElementById('warga-lansia').textContent = item.lansia;
 
         const badgeBantuan = document.getElementById('warga-status-bantuan');
+        const bRec = bantuanRecords.find(b => (b.kkId && b.kkId === item.id) || (b.nama && b.nama.trim().toLowerCase() === item.nama.trim().toLowerCase()));
+        const stBantuan = bRec ? bRec.status : (item.statusBantuan || (item.isPenerimaBantuan ? 'Disetujui' : 'Tidak Ada'));
+
         if (badgeBantuan) {
-          if (item.isPenerimaBantuan) {
-            badgeBantuan.textContent = 'Ya (Penerima)';
+          if (stBantuan === 'Disetujui') {
+            badgeBantuan.textContent = 'Ya (Penerima Disetujui)';
             badgeBantuan.style.background = 'var(--soft-green-bg)';
             badgeBantuan.style.color = 'var(--soft-green-text)';
+          } else if (stBantuan === 'Menunggu Persetujuan') {
+            badgeBantuan.textContent = 'Menunggu Persetujuan Kades';
+            badgeBantuan.style.background = '#fef3c7';
+            badgeBantuan.style.color = '#b45309';
+          } else if (stBantuan === 'Ditolak') {
+            badgeBantuan.textContent = 'Usulan Ditolak';
+            badgeBantuan.style.background = '#fee2e2';
+            badgeBantuan.style.color = '#dc2626';
           } else {
-            badgeBantuan.textContent = 'Tidak';
+            badgeBantuan.textContent = 'Bukan Penerima';
             badgeBantuan.style.background = '#f1f5f9';
             badgeBantuan.style.color = 'var(--text-medium)';
           }
         }
-        document.getElementById('warga-nama-bantuan').textContent = item.namaBantuan || 'Tidak Ada';
+        document.getElementById('warga-nama-bantuan').textContent = (bRec ? bRec.jenis : item.namaBantuan) || 'Tidak Ada';
 
-        // Render Anggota Table (Read-Only)
+        // Render Anggota Table (Read-Only Desktop) & Mobile Cards
         const tbody = document.getElementById('warga-anggota-table-body');
+        const mCards = document.getElementById('warga-anggota-cards-mobile');
         if (tbody) {
           if (item.anggotaList && item.anggotaList.length > 0) {
             tbody.innerHTML = item.anggotaList.map(a => `
@@ -2595,6 +3592,33 @@
             `).join('');
           } else {
             tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-medium); padding:16px;">Belum ada anggota keluarga yang diinputkan Kader untuk akun ini.</td></tr>`;
+          }
+        }
+        if (mCards) {
+          if (item.anggotaList && item.anggotaList.length > 0) {
+            mCards.innerHTML = item.anggotaList.map(a => `
+              <div class="m-card">
+                <div class="m-card-header">
+                  <div>
+                    <div class="m-card-title">${a.nama}</div>
+                    <div class="m-card-sub">NIK: <strong>${a.nik}</strong></div>
+                  </div>
+                  <span class="badge-status" style="background:var(--soft-blue-bg); color:var(--soft-blue-text); font-size:11px; padding:2px 8px; border-radius:6px; font-weight:600;">${a.hubungan}</span>
+                </div>
+                <div class="m-card-body">
+                  <div class="m-card-item">
+                    <span class="m-card-label">Jenis Kelamin</span>
+                    <span class="m-card-value">${a.jenisKelamin}</span>
+                  </div>
+                  <div class="m-card-item">
+                    <span class="m-card-label">Usia</span>
+                    <span class="m-card-value">${a.usia} Tahun</span>
+                  </div>
+                </div>
+              </div>
+            `).join('');
+          } else {
+            mCards.innerHTML = `<div class="m-card" style="text-align:center; color:var(--text-medium); padding:16px;">Belum ada anggota keluarga yang diinputkan Kader.</div>`;
           }
         }
       } else {
@@ -2621,8 +3645,12 @@
         document.getElementById('warga-nama-bantuan').textContent = '-';
 
         const tbody = document.getElementById('warga-anggota-table-body');
+        const mCards = document.getElementById('warga-anggota-cards-mobile');
         if (tbody) {
           tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-medium); padding:20px;">ℹ️ Belum ada anggota keluarga yang diinputkan Kader untuk akun <strong>${uNama}</strong>.</td></tr>`;
+        }
+        if (mCards) {
+          mCards.innerHTML = `<div class="m-card" style="text-align:center; color:var(--text-medium); padding:16px;">ℹ️ Belum ada anggota keluarga untuk akun <strong>${uNama}</strong>.</div>`;
         }
       }
     }
@@ -2755,9 +3783,58 @@
             <td>${k.khusus || 0}</td>
             <td>${rlhBadge}</td>
             <td>${k.sumberAir || 'PDAM'}</td>
-            <td>${k.namaBantuan || '-'}</td>
           </tr>`;
         }).join('');
+      }
+
+      const mRekapCards = document.getElementById('rekap-cards-mobile');
+      if (mRekapCards) {
+        if (filtered.length === 0) {
+          mRekapCards.innerHTML = `<div class="m-card" style="text-align:center; color:var(--text-medium); padding:20px;">Tidak ada data KK untuk filter ini.</div>`;
+        } else {
+          mRekapCards.innerHTML = filtered.map((k, idx) => {
+            const rlhBadge = renderRLHBadgeHtml(k);
+            const bL = Number(k.balitaL || 0);
+            const bP = Number(k.balitaP || 0);
+            const lnsL = Number(k.lansiaL !== undefined ? k.lansiaL : (k.lansia || 0));
+            const lnsP = Number(k.lansiaP !== undefined ? k.lansiaP : 0);
+            const pusVal = Number(k.pus || 0);
+            const wusVal = Number(k.wus || 0);
+
+            const kLaki = Number(k.laki || 0) > 0 ? Number(k.laki) : (bL + lnsL + pusVal);
+            const kPerempuan = Number(k.perempuan || 0) > 0 ? Number(k.perempuan) : (bP + lnsP + wusVal);
+            const kAnggota = Number(k.totalAnggota) || (kLaki + kPerempuan) || (k.anggotaList ? k.anggotaList.length : 0);
+
+            return `
+            <div class="m-card">
+              <div class="m-card-header">
+                <div>
+                  <div class="m-card-title">${idx + 1}. ${k.nama}</div>
+                  <div class="m-card-sub">RT ${k.rt} / RW ${k.rw} &bull; ${k.dawis}</div>
+                </div>
+                <div>${rlhBadge}</div>
+              </div>
+              <div class="m-card-body">
+                <div class="m-card-item">
+                  <span class="m-card-label">Total Anggota</span>
+                  <span class="m-card-value">${kAnggota} org (L:${kLaki}, P:${kPerempuan})</span>
+                </div>
+                <div class="m-card-item">
+                  <span class="m-card-label">Balita / Lansia</span>
+                  <span class="m-card-value">${bL + bP} Balita &bull; ${lnsL + lnsP} Lansia</span>
+                </div>
+                <div class="m-card-item">
+                  <span class="m-card-label">Sumber Air</span>
+                  <span class="m-card-value">${k.sumberAir || 'PDAM'}</span>
+                </div>
+                <div class="m-card-item">
+                  <span class="m-card-label">Bantuan Hibah</span>
+                  <span class="m-card-value" style="color:var(--primary-blue); font-weight:700;">${k.namaBantuan || '-'}</span>
+                </div>
+              </div>
+            </div>`;
+          }).join('');
+        }
       }
     }
 
@@ -2806,7 +3883,23 @@
           <td>${rlhBadge}</td>
           <td>${k.sumberAir || 'PDAM'}</td>
           <td>${k.makananPokok || 'Beras'}</td>
-          <td>${k.namaBantuan || '-'}</td>
+          <td>
+            <strong>${k.namaBantuan || '-'}</strong>
+            ${(() => {
+              const bRec = bantuanRecords.find(b => (b.kkId && b.kkId === k.id) || (b.nama && b.nama.trim().toLowerCase() === k.nama.trim().toLowerCase()));
+              const bStatus = bRec ? bRec.status : (k.isPenerimaBantuan ? (k.statusBantuan || 'Disetujui') : 'Tidak Ada');
+              if (k.isPenerimaBantuan && k.namaBantuan && k.namaBantuan !== '-') {
+                if (bStatus === 'Disetujui') {
+                  return `<br><span class="badge-disetujui" style="font-size:10px; padding:2px 6px;">Disetujui</span>`;
+                } else if (bStatus === 'Ditolak') {
+                  return `<br><span class="badge-ditolak" style="font-size:10px; padding:2px 6px;">Ditolak</span>`;
+                } else {
+                  return `<br><span class="badge-menunggu" style="font-size:10px; padding:2px 6px;">Menunggu</span>`;
+                }
+              }
+              return '';
+            })()}
+          </td>
           <td>
             <button class="btn-action-green" onclick="openAddAnggotaModal('${k.id}')">Tambah Anggota</button>
             <button class="btn-action-blue" onclick="openEditModal('${k.id}')">Edit</button>
@@ -2815,31 +3908,307 @@
         </tr>
       `;
       }).join('');
+
+      const mKaderCards = document.getElementById('kader-cards-mobile');
+      if (mKaderCards) {
+        if (filtered.length === 0) {
+          mKaderCards.innerHTML = `<div class="m-card" style="text-align:center; color:var(--text-medium); padding:20px;">Tidak ada data keluarga yang sesuai pencarian.</div>`;
+        } else {
+          mKaderCards.innerHTML = filtered.map((k, idx) => {
+            const rlhBadge = renderRLHBadgeHtml(k);
+            const bRec = bantuanRecords.find(b => (b.kkId && b.kkId === k.id) || (b.nama && b.nama.trim().toLowerCase() === k.nama.trim().toLowerCase()));
+            const bStatus = bRec ? bRec.status : (k.isPenerimaBantuan ? (k.statusBantuan || 'Disetujui') : 'Tidak Ada');
+            let bantuanBadge = '';
+            if (k.isPenerimaBantuan && k.namaBantuan && k.namaBantuan !== '-') {
+              if (bStatus === 'Disetujui') {
+                bantuanBadge = `<span class="badge-disetujui" style="font-size:10px; padding:2px 6px;">${k.namaBantuan} (Disetujui)</span>`;
+              } else if (bStatus === 'Ditolak') {
+                bantuanBadge = `<span class="badge-ditolak" style="font-size:10px; padding:2px 6px;">${k.namaBantuan} (Ditolak)</span>`;
+              } else {
+                bantuanBadge = `<span class="badge-menunggu" style="font-size:10px; padding:2px 6px;">${k.namaBantuan} (Menunggu)</span>`;
+              }
+            } else {
+              bantuanBadge = `<span style="font-size:11px; color:var(--text-medium);">-</span>`;
+            }
+
+            return `
+            <div class="m-card">
+              <div class="m-card-header">
+                <div>
+                  <div class="m-card-title">${idx + 1}. ${k.nama}</div>
+                  <div class="m-card-sub">Desa ${k.desa} &bull; RT ${k.rt}/RW ${k.rw} &bull; <strong>${k.dawis}</strong></div>
+                </div>
+                <div>${rlhBadge}</div>
+              </div>
+              <div class="m-card-body">
+                <div class="m-card-item">
+                  <span class="m-card-label">Anggota</span>
+                  <span class="m-card-value">${k.totalAnggota} org (L:${k.laki}, P:${k.perempuan})</span>
+                </div>
+                <div class="m-card-item">
+                  <span class="m-card-label">Balita / Lansia</span>
+                  <span class="m-card-value">${Number(k.balitaL)+Number(k.balitaP)} Balita &bull; ${k.lansia} Lansia</span>
+                </div>
+                <div class="m-card-item">
+                  <span class="m-card-label">Fasilitas</span>
+                  <span class="m-card-value">${k.sumberAir || 'PDAM'} &bull; ${k.makananPokok || 'Beras'}</span>
+                </div>
+                <div class="m-card-item">
+                  <span class="m-card-label">Bantuan Hibah</span>
+                  <span class="m-card-value">${bantuanBadge}</span>
+                </div>
+              </div>
+              <div class="m-card-actions">
+                <button class="btn-action-green" onclick="openAddAnggotaModal('${k.id}')">+ Anggota</button>
+                <button class="btn-action-blue" onclick="openEditModal('${k.id}')">Edit</button>
+                <button class="btn-action-red" onclick="deleteKk('${k.id}')">Hapus</button>
+              </div>
+            </div>`;
+          }).join('');
+        }
+      }
     }
 
-    /* RENDER MANAJEMEN BANTUAN HIBAH (KEPALA DESA - 100% MATCHING SCREENSHOT 3) */
+    /* RENDER MANAJEMEN BANTUAN HIBAH (KEPALA DESA - AKSI SETUJUI, TOLAK, HAPUS) */
     function renderManajemenBantuan() {
-      // Tags
-      const tagsContainer = document.getElementById('bantuan-tags-row');
-      tagsContainer.innerHTML = bantuanTags.map(tag => `
-        <span class="tag-pill">
-          ${tag}
-          <span class="btn-close-tag" onclick="removeBantuanTag('${tag}')">&times;</span>
-        </span>
-      `).join('');
+      // 1. Update Stat Cards Usulan Bantuan
+      const totalCount = bantuanRecords.length;
+      const pendingCount = bantuanRecords.filter(b => b.status === 'Menunggu Persetujuan').length;
+      const approvedCount = bantuanRecords.filter(b => b.status === 'Disetujui').length;
+      const rejectedCount = bantuanRecords.filter(b => b.status === 'Ditolak').length;
 
-      // Table Body
+      const elTotal = document.getElementById('stat-bantuan-total');
+      if (elTotal) elTotal.textContent = totalCount;
+      const elPending = document.getElementById('stat-bantuan-pending');
+      if (elPending) elPending.textContent = pendingCount;
+      const elApproved = document.getElementById('stat-bantuan-approved');
+      if (elApproved) elApproved.textContent = approvedCount;
+      const elRejected = document.getElementById('stat-bantuan-rejected');
+      if (elRejected) elRejected.textContent = rejectedCount;
+
+      // 2. Render Tags
+      const tagsContainer = document.getElementById('bantuan-tags-row');
+      if (tagsContainer) {
+        tagsContainer.innerHTML = bantuanTags.map(tag => `
+          <span class="tag-pill">
+            ${tag}
+            <span class="btn-close-tag" onclick="removeBantuanTag('${tag}')">&times;</span>
+          </span>
+        `).join('');
+      }
+
+      // 3. Filter Table Body
       const tbody = document.getElementById('bantuan-table-body');
-      tbody.innerHTML = bantuanRecords.map((b, idx) => `
-        <tr>
-          <td>${idx + 1}</td>
-          <td><strong>${b.nama}</strong></td>
-          <td>${b.jenis}</td>
-          <td>
-            <button class="btn-action-red" onclick="deleteBantuanRecord('${b.id}')">Hapus</button>
-          </td>
-        </tr>
-      `).join('');
+      if (!tbody) return;
+
+      const q = (document.getElementById('search-bantuan-input')?.value || '').toLowerCase().trim();
+      const stFilter = document.getElementById('filter-bantuan-status')?.value || 'ALL';
+
+      const filtered = bantuanRecords.filter(b => {
+        const matchQ = (b.nama || '').toLowerCase().includes(q) || 
+                       (b.jenis || '').toLowerCase().includes(q) || 
+                       (b.dawis || '').toLowerCase().includes(q);
+        const matchSt = (stFilter === 'ALL') || (b.status === stFilter);
+        return matchQ && matchSt;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align:center; padding:32px; color:var(--text-medium);">
+              <span class="material-icons-outlined" style="font-size:36px; color:#cbd5e1; display:block; margin-bottom:8px;">inbox</span>
+              Tidak ada data usulan bantuan yang cocok dengan pencarian / filter.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map((b, idx) => {
+        // Status Badge
+        let statusBadge = '';
+        if (b.status === 'Disetujui') {
+          statusBadge = `<span class="badge-disetujui"><span class="material-icons-outlined" style="font-size:13px;">check_circle</span> Disetujui</span>`;
+        } else if (b.status === 'Ditolak') {
+          statusBadge = `<span class="badge-ditolak"><span class="material-icons-outlined" style="font-size:13px;">cancel</span> Ditolak</span>`;
+        } else {
+          statusBadge = `<span class="badge-menunggu"><span class="material-icons-outlined" style="font-size:13px;">hourglass_top</span> Menunggu</span>`;
+        }
+
+        const dawisInfo = b.dawis ? `${b.dawis} (RT ${b.rt || '1'}/RW ${b.rw || '4'})` : 'Desa Japan';
+        const pengusulInfo = b.diajukanOleh || 'Kader Siti Aminah';
+        const tanggalInfo = b.tanggal || '06/09/2026';
+
+        // Action states
+        const isDisetujui = b.status === 'Disetujui';
+        const isDitolak = b.status === 'Ditolak';
+
+        return `
+          <tr>
+            <td style="text-align:center;">${idx + 1}</td>
+            <td>
+              <strong style="color:var(--text-dark); font-size:13px;">${b.nama}</strong>
+              <div style="font-size:11px; color:var(--text-medium); margin-top:2px;">${dawisInfo}</div>
+            </td>
+            <td>
+              <span class="tag-pill" style="margin:0; background:var(--soft-blue-bg); color:var(--primary-blue); font-weight:700;">${b.jenis}</span>
+            </td>
+            <td>
+              <div style="font-size:12px; font-weight:600; color:var(--text-dark);">${pengusulInfo}</div>
+              <div style="font-size:11px; color:var(--text-medium); margin-top:2px;">📅 ${tanggalInfo}</div>
+            </td>
+            <td>
+              ${statusBadge}
+            </td>
+            <td style="text-align:center; white-space:nowrap;">
+              <button class="btn-action-green" onclick="setujuiBantuanRecord('${b.id}')" title="Setujui Bantuan" style="${isDisetujui ? 'opacity:0.35; cursor:not-allowed;' : ''}">
+                <span class="material-icons-outlined" style="font-size:15px; vertical-align:middle;">check</span> Setujui
+              </button>
+              <button class="btn-action-yellow" onclick="tolakBantuanRecord('${b.id}')" title="Tolak Bantuan" style="${isDitolak ? 'opacity:0.35; cursor:not-allowed;' : ''}">
+                <span class="material-icons-outlined" style="font-size:15px; vertical-align:middle;">close</span> Tolak
+              </button>
+              <button class="btn-action-red" onclick="deleteBantuanRecord('${b.id}')" title="Hapus Data Bantuan">
+                <span class="material-icons-outlined" style="font-size:15px; vertical-align:middle;">delete</span> Hapus
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Populate Mobile Cards View (Single Glance, No Horizontal Scroll)
+      const mBantuanCards = document.getElementById('bantuan-cards-mobile');
+      if (mBantuanCards) {
+        if (filtered.length === 0) {
+          mBantuanCards.innerHTML = `
+            <div class="m-card" style="text-align:center; padding:24px; color:var(--text-medium);">
+              <span class="material-icons-outlined" style="font-size:32px; color:#cbd5e1; display:block; margin-bottom:6px;">inbox</span>
+              Tidak ada data usulan bantuan yang cocok.
+            </div>
+          `;
+        } else {
+          mBantuanCards.innerHTML = filtered.map((b, idx) => {
+            let statusBadge = '';
+            if (b.status === 'Disetujui') {
+              statusBadge = `<span class="badge-disetujui"><span class="material-icons-outlined" style="font-size:13px;">check_circle</span> Disetujui</span>`;
+            } else if (b.status === 'Ditolak') {
+              statusBadge = `<span class="badge-ditolak"><span class="material-icons-outlined" style="font-size:13px;">cancel</span> Ditolak</span>`;
+            } else {
+              statusBadge = `<span class="badge-menunggu"><span class="material-icons-outlined" style="font-size:13px;">hourglass_top</span> Menunggu</span>`;
+            }
+
+            const dawisInfo = b.dawis ? `${b.dawis} (RT ${b.rt || '1'}/RW ${b.rw || '4'})` : 'Desa Japan';
+            const pengusulInfo = b.diajukanOleh || 'Kader Siti Aminah';
+            const tanggalInfo = b.tanggal || '06/09/2026';
+            const isDisetujui = b.status === 'Disetujui';
+            const isDitolak = b.status === 'Ditolak';
+
+            return `
+            <div class="m-card">
+              <div class="m-card-header">
+                <div>
+                  <div class="m-card-title">${idx + 1}. ${b.nama}</div>
+                  <div class="m-card-sub">${dawisInfo}</div>
+                </div>
+                <div>${statusBadge}</div>
+              </div>
+              <div class="m-card-body">
+                <div class="m-card-item">
+                  <span class="m-card-label">Jenis Bantuan</span>
+                  <span class="m-card-value" style="color:var(--primary-blue); font-weight:700;">${b.jenis}</span>
+                </div>
+                <div class="m-card-item">
+                  <span class="m-card-label">Pengusul & Tgl</span>
+                  <span class="m-card-value">${pengusulInfo} &bull; ${tanggalInfo}</span>
+                </div>
+              </div>
+              <div class="m-card-actions">
+                <button class="btn-action-green" onclick="setujuiBantuanRecord('${b.id}')" title="Setujui" style="${isDisetujui ? 'opacity:0.35; cursor:not-allowed;' : ''}">
+                  <span class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">check</span> Setujui
+                </button>
+                <button class="btn-action-yellow" onclick="tolakBantuanRecord('${b.id}')" title="Tolak" style="${isDitolak ? 'opacity:0.35; cursor:not-allowed;' : ''}">
+                  <span class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">close</span> Tolak
+                </button>
+                <button class="btn-action-red" onclick="deleteBantuanRecord('${b.id}')" title="Hapus">
+                  <span class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">delete</span> Hapus
+                </button>
+              </div>
+            </div>`;
+          }).join('');
+        }
+      }
+    }
+
+    /* AKSI KADES: SETUJUI BANTUAN */
+    function setujuiBantuanRecord(id) {
+      const rec = bantuanRecords.find(b => b.id === id);
+      if (!rec) return;
+
+      rec.status = 'Disetujui';
+
+      // Sinkronkan ke data keluarga terkait
+      const kk = keluargaData.find(k => (rec.kkId && k.id === rec.kkId) || (k.nama.trim().toLowerCase() === rec.nama.trim().toLowerCase()));
+      if (kk) {
+        kk.isPenerimaBantuan = true;
+        kk.namaBantuan = rec.jenis;
+        kk.statusBantuan = 'Disetujui';
+      }
+
+      saveDb();
+      renderManajemenBantuan();
+      renderRekapData();
+      renderKaderTable();
+      renderDashboardStats();
+
+      alert(`✅ Berhasil! Usulan bantuan "${rec.jenis}" untuk "${rec.nama}" telah DISETUJUI oleh Kepala Desa.`);
+    }
+
+    /* AKSI KADES: TOLAK BANTUAN */
+    function tolakBantuanRecord(id) {
+      const rec = bantuanRecords.find(b => b.id === id);
+      if (!rec) return;
+
+      if (confirm(`Apakah Anda yakin ingin MENOLAK usulan bantuan "${rec.jenis}" untuk keluarga "${rec.nama}"?`)) {
+        rec.status = 'Ditolak';
+
+        // Sinkronkan ke data keluarga terkait
+        const kk = keluargaData.find(k => (rec.kkId && k.id === rec.kkId) || (k.nama.trim().toLowerCase() === rec.nama.trim().toLowerCase()));
+        if (kk) {
+          kk.isPenerimaBantuan = false;
+          kk.statusBantuan = 'Ditolak';
+        }
+
+        saveDb();
+        renderManajemenBantuan();
+        renderRekapData();
+        renderKaderTable();
+        renderDashboardStats();
+
+        alert(`❌ Usulan bantuan "${rec.jenis}" untuk keluarga "${rec.nama}" telah DITOLAK.`);
+      }
+    }
+
+    /* AKSI KADES: HAPUS BANTUAN */
+    function deleteBantuanRecord(id) {
+      const rec = bantuanRecords.find(b => b.id === id);
+      if (!rec) return;
+
+      if (confirm(`Apakah Anda yakin ingin MENGHAPUS usulan bantuan "${rec.jenis}" untuk "${rec.nama}"? Data akan terhapus permanen.`)) {
+        const kk = keluargaData.find(k => (rec.kkId && k.id === rec.kkId) || (k.nama.trim().toLowerCase() === rec.nama.trim().toLowerCase()));
+        if (kk) {
+          kk.isPenerimaBantuan = false;
+          kk.namaBantuan = '-';
+          kk.statusBantuan = 'Tidak Ada';
+        }
+
+        bantuanRecords = bantuanRecords.filter(b => b.id !== id);
+        saveDb();
+        renderManajemenBantuan();
+        renderRekapData();
+        renderKaderTable();
+        renderDashboardStats();
+
+        alert(`🗑️ Data bantuan "${rec.jenis}" untuk "${rec.nama}" berhasil dihapus.`);
+      }
     }
 
     function addBantuanTag() {
@@ -2859,23 +4228,72 @@
     }
 
     function openAddBantuanModal() {
-      const nama = prompt('Masukkan Nama Kepala Keluarga:');
-      if (nama) {
-        const jenis = prompt(`Masukkan Jenis Bantuan (${bantuanTags.join(', ')}):`, bantuanTags[0] || 'PKH');
-        if (jenis) {
-          bantuanRecords.push({ id: Date.now().toString(), nama: nama, jenis: jenis });
-          saveDb();
-          renderManajemenBantuan();
-        }
+      const selectKk = document.getElementById('modal-bantuan-kk');
+      if (selectKk) {
+        selectKk.innerHTML = keluargaData.map(k => `
+          <option value="${k.id}">${k.nama} (${k.dawis || 'Dawis'} - RT ${k.rt || '1'}/RW ${k.rw || '4'})</option>
+        `).join('') || '<option value="">(Belum ada data KK)</option>';
       }
+
+      const selectJenis = document.getElementById('modal-bantuan-jenis');
+      if (selectJenis) {
+        selectJenis.innerHTML = bantuanTags.map(t => `
+          <option value="${t}">${t}</option>
+        `).join('') || '<option value="PKH">PKH</option>';
+      }
+
+      document.getElementById('modal-add-bantuan').classList.add('active');
     }
 
-    function deleteBantuanRecord(id) {
-      if (confirm('Apakah Anda yakin ingin menghapus data bantuan ini?')) {
-        bantuanRecords = bantuanRecords.filter(b => b.id !== id);
-        saveDb();
-        renderManajemenBantuan();
+    function closeAddBantuanModal() {
+      document.getElementById('modal-add-bantuan').classList.remove('active');
+    }
+
+    function submitDirectBantuan() {
+      const kkId = document.getElementById('modal-bantuan-kk').value;
+      const kk = keluargaData.find(k => k.id === kkId);
+      if (!kk) return alert('Silakan pilih Kepala Keluarga terlebih dahulu!');
+
+      const jenis = document.getElementById('modal-bantuan-jenis').value;
+      const status = document.getElementById('modal-bantuan-status').value;
+
+      const existing = bantuanRecords.find(b => b.kkId === kk.id || b.nama.toLowerCase() === kk.nama.toLowerCase());
+      if (existing) {
+        existing.jenis = jenis;
+        existing.status = status;
+        existing.diajukanOleh = 'Kepala Desa';
+        existing.tanggal = new Date().toLocaleDateString('id-ID');
+      } else {
+        bantuanRecords.unshift({
+          id: 'b-' + Date.now().toString(),
+          kkId: kk.id,
+          nama: kk.nama,
+          rt: kk.rt,
+          rw: kk.rw,
+          dawis: kk.dawis,
+          jenis: jenis,
+          status: status,
+          diajukanOleh: 'Kepala Desa',
+          tanggal: new Date().toLocaleDateString('id-ID')
+        });
       }
+
+      if (status === 'Disetujui') {
+        kk.isPenerimaBantuan = true;
+        kk.namaBantuan = jenis;
+        kk.statusBantuan = 'Disetujui';
+      } else {
+        kk.statusBantuan = status;
+      }
+
+      saveDb();
+      closeAddBantuanModal();
+      renderManajemenBantuan();
+      renderRekapData();
+      renderKaderTable();
+      renderDashboardStats();
+
+      alert(`✅ Bantuan "${jenis}" untuk "${kk.nama}" berhasil disimpan.`);
     }
 
     function openAddAnggotaModal(id) {
@@ -3073,6 +4491,41 @@
           : [{ nik: '331901' + Math.floor(1e9 + Math.random() * 9e9), nama, hubungan: 'Kepala Keluarga', jenisKelamin: laki >= 1 ? 'Laki-laki' : 'Perempuan', usia: 40 }]
       };
 
+      // Integrasi pengajuan usulan bantuan hibah oleh kader
+      if (isBantuan && dataObj.namaBantuan && dataObj.namaBantuan !== '-') {
+        const existingIdx = bantuanRecords.findIndex(b => (dataObj.id && b.kkId === dataObj.id) || (b.nama && b.nama.trim().toLowerCase() === dataObj.nama.trim().toLowerCase()));
+        if (existingIdx !== -1) {
+          bantuanRecords[existingIdx].nama = dataObj.nama;
+          bantuanRecords[existingIdx].jenis = dataObj.namaBantuan;
+          bantuanRecords[existingIdx].rt = dataObj.rt;
+          bantuanRecords[existingIdx].rw = dataObj.rw;
+          bantuanRecords[existingIdx].dawis = dataObj.dawis;
+          bantuanRecords[existingIdx].kkId = dataObj.id;
+          dataObj.statusBantuan = bantuanRecords[existingIdx].status || 'Menunggu Persetujuan';
+        } else {
+          const newRec = {
+            id: 'b-' + Date.now().toString(),
+            kkId: dataObj.id,
+            nama: dataObj.nama,
+            rt: dataObj.rt,
+            rw: dataObj.rw,
+            dawis: dataObj.dawis,
+            jenis: dataObj.namaBantuan,
+            status: 'Menunggu Persetujuan',
+            diajukanOleh: 'Kader Siti Aminah',
+            tanggal: new Date().toLocaleDateString('id-ID')
+          };
+          bantuanRecords.unshift(newRec);
+          dataObj.statusBantuan = 'Menunggu Persetujuan';
+        }
+      } else {
+        dataObj.statusBantuan = 'Tidak Ada';
+        const bIdx = bantuanRecords.findIndex(b => (dataObj.id && b.kkId === dataObj.id) || (b.nama && b.nama.trim().toLowerCase() === dataObj.nama.trim().toLowerCase()));
+        if (bIdx !== -1 && bantuanRecords[bIdx].status === 'Menunggu Persetujuan') {
+          bantuanRecords.splice(bIdx, 1);
+        }
+      }
+
       if (editingId) {
         const idx = keluargaData.findIndex(k => k.id === editingId);
         if (idx !== -1) keluargaData[idx] = dataObj;
@@ -3085,14 +4538,21 @@
       renderKaderTable();
       renderRekapData();
       renderDashboardStats();
+      renderManajemenBantuan();
     }
 
     function deleteKk(id) {
       if (confirm('Apakah Anda yakin ingin menghapus data KK ini?')) {
+        const target = keluargaData.find(k => k.id === id);
+        if (target) {
+          bantuanRecords = bantuanRecords.filter(b => (b.kkId !== id) && (b.nama.trim().toLowerCase() !== target.nama.trim().toLowerCase()));
+        }
         keluargaData = keluargaData.filter(k => k.id !== id);
         saveDb();
         renderKaderTable();
         renderRekapData();
+        renderDashboardStats();
+        renderManajemenBantuan();
       }
     }
 
@@ -3238,6 +4698,52 @@
           </tr>
         `;
       }).join('');
+
+      // Populate Mobile Cards View (Single Glance, No Horizontal Scroll)
+      const mAkunCards = document.getElementById('akun-warga-cards-mobile');
+      if (mAkunCards) {
+        if (filtered.length === 0) {
+          mAkunCards.innerHTML = `<div class="m-card" style="text-align:center; color:var(--text-medium); padding:20px;">Tidak ada akun warga yang sesuai pencarian.</div>`;
+        } else {
+          mAkunCards.innerHTML = filtered.map((k, i) => {
+            const akun = akunWargaList.find(a => a.kkId === k.id) || {
+              email: k.nama.replace(/\s+/g, '.').toLowerCase() + '@japan.desa.id',
+              password: '123'
+            };
+            const headAnggota = k.anggotaList.find(a => a.isHead || a.nik === k.nikHead || a.nama === k.nama) || k.anggotaList[0];
+
+            return `
+            <div class="m-card">
+              <div class="m-card-header">
+                <div>
+                  <div class="m-card-title">${i + 1}. ${k.nama}</div>
+                  <div class="m-card-sub">${k.dawis} &bull; RT ${k.rt}/RW ${k.rw}</div>
+                </div>
+                <span class="badge-status" style="background:var(--soft-blue-bg); color:var(--primary-blue); font-size:11px; padding:2px 8px; border-radius:6px; font-weight:600;">${k.totalAnggota || k.anggotaList.length} Org</span>
+              </div>
+              <div class="m-card-body">
+                <div class="m-card-item">
+                  <span class="m-card-label">Email Warga</span>
+                  <span class="m-card-value" style="color:var(--primary-blue); font-weight:600;">${akun.email}</span>
+                </div>
+                <div class="m-card-item">
+                  <span class="m-card-label">Password</span>
+                  <span class="m-card-value"><code style="font-weight:700;">${akun.password}</code></span>
+                </div>
+                <div class="m-card-item" style="grid-column: span 2;">
+                  <span class="m-card-label">Kepala Keluarga (Head)</span>
+                  <span class="m-card-value">${headAnggota ? `<strong style="color:var(--soft-green-text);">${headAnggota.nama}</strong> (${headAnggota.nik})` : '<span style="color:#ef4444;">Belum Set</span>'}</span>
+                </div>
+              </div>
+              <div class="m-card-actions">
+                <button class="btn-add" style="background:var(--primary-blue); font-size:11px;" onclick="openKelolaAnggotaModal('${k.id}')">👥 Anggota</button>
+                <button class="btn-action-blue" onclick="editAkunWarga('${k.id}')">Edit</button>
+                <button class="btn-action-red" onclick="hapusKkDanAkun('${k.id}')">Hapus</button>
+              </div>
+            </div>`;
+          }).join('');
+        }
+      }
     }
 
     // ========== KELOLA ANGGOTA & KEPALA KELUARGA MODAL ==========
@@ -3489,6 +4995,40 @@
           </td>
         </tr>
       `).join('');
+
+      // Populate Mobile Cards View (Single Glance, No Horizontal Scroll)
+      const mUserCards = document.getElementById('user-cards-mobile');
+      if (mUserCards) {
+        if (filtered.length === 0) {
+          mUserCards.innerHTML = `<div class="m-card" style="text-align:center; color:var(--text-medium); padding:20px;">Tidak ada data user.</div>`;
+        } else {
+          mUserCards.innerHTML = filtered.map((u, i) => `
+          <div class="m-card">
+            <div class="m-card-header">
+              <div>
+                <div class="m-card-title">${i + 1}. ${u.nama}</div>
+                <div class="m-card-sub">Username: <strong>${u.username}</strong></div>
+              </div>
+              <div>${roleBadge(u.role)}</div>
+            </div>
+            <div class="m-card-body">
+              <div class="m-card-item">
+                <span class="m-card-label">Email</span>
+                <span class="m-card-value">${u.email || '-'}</span>
+              </div>
+              <div class="m-card-item">
+                <span class="m-card-label">Password</span>
+                <span class="m-card-value"><code style="font-weight:700;">${u.password}</code></span>
+              </div>
+            </div>
+            <div class="m-card-actions">
+              <button class="btn-action-blue" onclick="editUser('${u.id}')">Edit</button>
+              <button class="btn-action-red" onclick="hapusUser('${u.id}')">Hapus</button>
+            </div>
+          </div>
+          `).join('');
+        }
+      }
     }
 
     function openAddUserModal() {

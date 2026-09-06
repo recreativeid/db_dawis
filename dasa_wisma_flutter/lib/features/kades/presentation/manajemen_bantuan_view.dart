@@ -197,10 +197,11 @@ class _ManajemenBantuanViewState extends State<ManajemenBantuanView> {
               borderRadius: BorderRadius.circular(16),
               child: Table(
                 columnWidths: const {
-                  0: FixedColumnWidth(60),
+                  0: FixedColumnWidth(50),
                   1: FlexColumnWidth(2),
-                  2: FlexColumnWidth(2),
-                  3: FixedColumnWidth(100),
+                  2: FlexColumnWidth(1.5),
+                  3: FlexColumnWidth(1.8),
+                  4: FixedColumnWidth(180),
                 },
                 children: [
                   // Table Header
@@ -221,7 +222,11 @@ class _ManajemenBantuanViewState extends State<ManajemenBantuanView> {
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                        child: Text("Aksi", style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+                        child: Text("Status Usulan", style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textDark)),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        child: Text("Aksi (Kades)", style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textDark)),
                       ),
                     ],
                   ),
@@ -229,6 +234,21 @@ class _ManajemenBantuanViewState extends State<ManajemenBantuanView> {
                   ...bantuanList.asMap().entries.map((entry) {
                     final index = entry.key + 1;
                     final item = entry.value;
+
+                    Color statusBg = const Color(0xFFFEF3C7);
+                    Color statusColor = const Color(0xFFB45309);
+                    IconData statusIcon = Icons.hourglass_top_rounded;
+
+                    if (item.status == 'Disetujui') {
+                      statusBg = AppTheme.softGreenBg;
+                      statusColor = AppTheme.softGreenText;
+                      statusIcon = Icons.check_circle_rounded;
+                    } else if (item.status == 'Ditolak') {
+                      statusBg = const Color(0xFFFEE2E2);
+                      statusColor = const Color(0xFFDC2626);
+                      statusIcon = Icons.cancel_rounded;
+                    }
+
                     return TableRow(
                       decoration: const BoxDecoration(
                         border: Border(bottom: BorderSide(color: AppTheme.borderColor, width: 0.8)),
@@ -240,7 +260,13 @@ class _ManajemenBantuanViewState extends State<ManajemenBantuanView> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                          child: Text(item.namaKepalaKeluarga, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(item.namaKepalaKeluarga, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                              Text("Oleh: ${item.diajukanOleh}", style: const TextStyle(fontSize: 11, color: AppTheme.textMedium)),
+                            ],
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -248,12 +274,59 @@ class _ManajemenBantuanViewState extends State<ManajemenBantuanView> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                          child: InkWell(
-                            onTap: () => provider.deleteBantuanRecord(item.id),
-                            child: const Text(
-                              "Hapus",
-                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.dangerRed),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: statusBg,
+                              borderRadius: BorderRadius.circular(20),
                             ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(statusIcon, size: 13, color: statusColor),
+                                const SizedBox(width: 4),
+                                Text(item.status, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: statusColor)),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              InkWell(
+                                onTap: item.status == 'Disetujui' ? null : () => provider.setujuiBantuanRecord(item.id),
+                                child: Text(
+                                  "Setujui",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: item.status == 'Disetujui' ? Colors.grey : AppTheme.successGreen,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              InkWell(
+                                onTap: item.status == 'Ditolak' ? null : () => provider.tolakBantuanRecord(item.id),
+                                child: Text(
+                                  "Tolak",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: item.status == 'Ditolak' ? Colors.grey : const Color(0xFFD97706),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              InkWell(
+                                onTap: () => provider.deleteBantuanRecord(item.id),
+                                child: const Text(
+                                  "Hapus",
+                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.dangerRed),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],

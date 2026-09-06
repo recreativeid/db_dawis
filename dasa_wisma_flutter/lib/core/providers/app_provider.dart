@@ -7,11 +7,17 @@ class BantuanItemModel {
   final String id;
   final String namaKepalaKeluarga;
   final String namaBantuan;
+  final String status;
+  final String diajukanOleh;
+  final String tanggal;
 
   BantuanItemModel({
     required this.id,
     required this.namaKepalaKeluarga,
     required this.namaBantuan,
+    this.status = 'Menunggu Persetujuan',
+    this.diajukanOleh = 'Kader Siti Aminah',
+    this.tanggal = '06/09/2026',
   });
 }
 
@@ -58,9 +64,10 @@ class AppProvider with ChangeNotifier {
   // Master list of Bantuan Hibah tags/names defined by Kepala Desa
   List<String> _masterBantuanHibah = ['PKH', 'BPNT', 'BLT Dana Desa', 'PJK'];
   List<BantuanItemModel> _bantuanRecordList = [
-    BantuanItemModel(id: '1', namaKepalaKeluarga: 'Budi Santoso', namaBantuan: 'PJK'),
-    BantuanItemModel(id: '2', namaKepalaKeluarga: 'Slamet Riyadi', namaBantuan: 'PJK'),
-    BantuanItemModel(id: '3', namaKepalaKeluarga: 'Arjun Naja', namaBantuan: 'PKH'),
+    BantuanItemModel(id: '1', namaKepalaKeluarga: 'Budi Santoso', namaBantuan: 'PKH', status: 'Disetujui', diajukanOleh: 'Kader Siti Aminah', tanggal: '01/09/2026'),
+    BantuanItemModel(id: '2', namaKepalaKeluarga: 'Slamet Riyadi', namaBantuan: 'BLT', status: 'Menunggu Persetujuan', diajukanOleh: 'Kader Siti Aminah', tanggal: '05/09/2026'),
+    BantuanItemModel(id: '3', namaKepalaKeluarga: 'Arjun Naja', namaBantuan: 'BPNT', status: 'Menunggu Persetujuan', diajukanOleh: 'Kader Siti Aminah', tanggal: '06/09/2026'),
+    BantuanItemModel(id: '4', namaKepalaKeluarga: 'Budi Santoso', namaBantuan: 'PJK', status: 'Disetujui', diajukanOleh: 'Kepala Desa', tanggal: '02/09/2026'),
   ];
 
   // Master list of Dawis (Dasa Wisma) with RT & RW
@@ -411,18 +418,71 @@ class AppProvider with ChangeNotifier {
 
   void removeBantuanTag(String tag) => removeMasterBantuan(tag);
 
-  void addBantuanRecord(String namaKepalaKeluarga, String namaBantuan) {
+  void addBantuanRecord(String namaKepalaKeluarga, String namaBantuan, {String status = 'Disetujui', String diajukanOleh = 'Kepala Desa'}) {
     _bantuanRecordList.add(BantuanItemModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       namaKepalaKeluarga: namaKepalaKeluarga,
       namaBantuan: namaBantuan,
+      status: status,
+      diajukanOleh: diajukanOleh,
+      tanggal: '06/09/2026',
     ));
     notifyListeners();
   }
 
+  void setujuiBantuanRecord(String id) {
+    int idx = _bantuanRecordList.indexWhere((b) => b.id == id);
+    if (idx != -1) {
+      final old = _bantuanRecordList[idx];
+      _bantuanRecordList[idx] = BantuanItemModel(
+        id: old.id,
+        namaKepalaKeluarga: old.namaKepalaKeluarga,
+        namaBantuan: old.namaBantuan,
+        status: 'Disetujui',
+        diajukanOleh: old.diajukanOleh,
+        tanggal: old.tanggal,
+      );
+
+      int kkIdx = _keluargaList.indexWhere((k) => k.namaKepalaKeluarga.toLowerCase() == old.namaKepalaKeluarga.toLowerCase());
+      if (kkIdx != -1) {
+        updateBantuanKeluarga(_keluargaList[kkIdx].id, true, old.namaBantuan);
+      }
+      notifyListeners();
+    }
+  }
+
+  void tolakBantuanRecord(String id) {
+    int idx = _bantuanRecordList.indexWhere((b) => b.id == id);
+    if (idx != -1) {
+      final old = _bantuanRecordList[idx];
+      _bantuanRecordList[idx] = BantuanItemModel(
+        id: old.id,
+        namaKepalaKeluarga: old.namaKepalaKeluarga,
+        namaBantuan: old.namaBantuan,
+        status: 'Ditolak',
+        diajukanOleh: old.diajukanOleh,
+        tanggal: old.tanggal,
+      );
+
+      int kkIdx = _keluargaList.indexWhere((k) => k.namaKepalaKeluarga.toLowerCase() == old.namaKepalaKeluarga.toLowerCase());
+      if (kkIdx != -1) {
+        updateBantuanKeluarga(_keluargaList[kkIdx].id, false, old.namaBantuan);
+      }
+      notifyListeners();
+    }
+  }
+
   void deleteBantuanRecord(String id) {
-    _bantuanRecordList.removeWhere((b) => b.id == id);
-    notifyListeners();
+    int idx = _bantuanRecordList.indexWhere((b) => b.id == id);
+    if (idx != -1) {
+      final old = _bantuanRecordList[idx];
+      int kkIdx = _keluargaList.indexWhere((k) => k.namaKepalaKeluarga.toLowerCase() == old.namaKepalaKeluarga.toLowerCase());
+      if (kkIdx != -1) {
+        updateBantuanKeluarga(_keluargaList[kkIdx].id, false, '-');
+      }
+      _bantuanRecordList.removeAt(idx);
+      notifyListeners();
+    }
   }
 
   void updateBantuanKeluarga(String kkId, bool isPenerima, String namaBantuan) {

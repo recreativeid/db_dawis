@@ -7,7 +7,7 @@
             "desa": "Japan",
             "rt": "1",
             "rw": "4",
-            "dawis": "Dahlia 1",
+            "dawis": "dahlia 9",
             "totalAnggota": 3,
             "laki": 1,
             "perempuan": 2,
@@ -20,20 +20,21 @@
             "wus": 1,
             "hamil": 1,
             "menyusui": 1,
+            "khusus": 0,
             "tunaHuruf": 1,
             "tunaNetra": 1,
             "tunaRungu": 0,
-            "khusus": 0,
-            "kriteriaRumah": "Sehat Layak Huni",
-            "tempatSampah": true,
-            "spal": true,
-            "jamban": true,
-            "p4k": true,
+            "skorRLH": 100,
+            "kriteriaRumah": "Rumah Layak Huni (RLH)",
             "sumberAir": "PDAM",
             "makananPokok": "Beras",
+            "jamban": true,
+            "tempatSampah": true,
+            "spal": true,
+            "listrik": true,
             "partisipasi": "UP2K",
             "isPenerimaBantuan": true,
-            "namaBantuan": "PJK",
+            "namaBantuan": "PKH",
             "anggotaList": [
                 {
                     "nik": "3319011205800002",
@@ -59,7 +60,8 @@
                     "usia": 3,
                     "isHead": false
                 }
-            ]
+            ],
+            "statusBantuan": "Disetujui"
         },
         {
             "id": "2",
@@ -179,39 +181,53 @@
         {
             "id": "1",
             "nama": "Budi Santoso",
-            "jenis": "PKH"
+            "jenis": "PKH",
+            "status": "Disetujui",
+            "diajukanOleh": "Kepala Desa",
+            "tanggal": "6\/9\/2026"
         },
         {
             "id": "2",
             "nama": "arjun naja",
-            "jenis": "PKH"
+            "jenis": "PKH",
+            "status": "Disetujui",
+            "diajukanOleh": "Kader Siti Aminah",
+            "tanggal": "06\/09\/2026"
         },
         {
             "id": "3",
             "nama": "Budi Santoso r",
-            "jenis": "PJK"
+            "jenis": "PJK",
+            "status": "Menunggu Persetujuan",
+            "diajukanOleh": "Kader Siti Aminah",
+            "tanggal": "06\/09\/2026"
         },
         {
             "id": "4",
             "nama": "arjun",
-            "jenis": "PKH"
+            "jenis": "PKH",
+            "status": "Menunggu Persetujuan",
+            "diajukanOleh": "Kader Siti Aminah",
+            "tanggal": "06\/09\/2026"
         },
         {
             "id": "5",
             "nama": "arjun naja",
-            "jenis": "PJK"
+            "jenis": "PJK",
+            "status": "Menunggu Persetujuan",
+            "diajukanOleh": "Kader Siti Aminah",
+            "tanggal": "06\/09\/2026"
         },
         {
             "id": "6",
             "nama": "Budi Santoso",
-            "jenis": "PJK"
+            "jenis": "PJK",
+            "status": "Menunggu Persetujuan",
+            "diajukanOleh": "Kader Siti Aminah",
+            "tanggal": "06\/09\/2026"
         }
     ],
-    "bantuanTags": [
-        "PKH",
-        "BPNT",
-        "BLT"
-    ],
+    "bantuanTags": [],
     "masterDawisList": [
         {
             "nama": "dahlia 9",

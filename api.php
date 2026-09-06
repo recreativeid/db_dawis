@@ -112,12 +112,11 @@ function getDefaultData() {
             ['id' => 'u3', 'username' => 'kades', 'email' => 'kades@japan.desa.id', 'nama' => 'Bapak Kepala Desa', 'role' => 'kades', 'password' => '123']
         ],
         'bantuanRecords' => [
-            ['id' => '1', 'nama' => 'Budi Santoso', 'jenis' => 'PKH'],
-            ['id' => '2', 'nama' => 'arjun naja', 'jenis' => 'PKH'],
-            ['id' => '3', 'nama' => 'Budi Santoso r', 'jenis' => 'PJK'],
-            ['id' => '4', 'nama' => 'arjun', 'jenis' => 'PKH'],
-            ['id' => '5', 'nama' => 'arjun naja', 'jenis' => 'PJK'],
-            ['id' => '6', 'nama' => 'Budi Santoso', 'jenis' => 'PJK']
+            ['id' => '1', 'kkId' => '1', 'nama' => 'Budi Santoso', 'rt' => '1', 'rw' => '4', 'dawis' => 'dahlia 1', 'jenis' => 'PKH', 'status' => 'Disetujui', 'diajukanOleh' => 'Kader Siti Aminah', 'tanggal' => '01/09/2026'],
+            ['id' => '2', 'kkId' => '2', 'nama' => 'Slamet Riyadi', 'rt' => '2', 'rw' => '4', 'dawis' => 'dahlia 2', 'jenis' => 'BLT', 'status' => 'Menunggu Persetujuan', 'diajukanOleh' => 'Kader Siti Aminah', 'tanggal' => '05/09/2026'],
+            ['id' => '3', 'kkId' => '3', 'nama' => 'Arjun Naja', 'rt' => '3', 'rw' => '4', 'dawis' => 'dahlia 9', 'jenis' => 'BPNT', 'status' => 'Menunggu Persetujuan', 'diajukanOleh' => 'Kader Siti Aminah', 'tanggal' => '06/09/2026'],
+            ['id' => '4', 'kkId' => '1', 'nama' => 'Budi Santoso', 'rt' => '1', 'rw' => '4', 'dawis' => 'dahlia 1', 'jenis' => 'PJK', 'status' => 'Disetujui', 'diajukanOleh' => 'Kepala Desa', 'tanggal' => '02/09/2026'],
+            ['id' => '5', 'kkId' => '4', 'nama' => 'Mbah Joyo', 'rt' => '2', 'rw' => '4', 'dawis' => 'dahlia 2', 'jenis' => 'PKH Lansia', 'status' => 'Ditolak', 'diajukanOleh' => 'Kader Siti Aminah', 'tanggal' => '03/09/2026']
         ],
         'bantuanTags' => ['PKH', 'BPNT', 'BLT'],
         'masterDawisList' => [
